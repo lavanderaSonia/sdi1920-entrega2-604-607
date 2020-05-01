@@ -2,12 +2,10 @@
 let express = require('express');
 let app = express();
 
-let os = require('os');
-let puerto = 3000;
-
-app.listen(puerto, function () {
-console.log("Servidor listo " + puerto);
+app.listen(app.get('port'), function() {
+    console.log("Servidor activo");
 })
+
 
 let rest = require('request');
 app.set('rest', rest);
@@ -111,7 +109,9 @@ app.set('crypto', crypto);
 require("./routes/rusuarios")(app, swig, gestorBD); //(app,param1, param2, etc.)
 
 
-
+app.get('/', function (req, res) {
+    res.redirect('/identificarse');
+});
 
 
 app.use(function (err, req, res, next) {
