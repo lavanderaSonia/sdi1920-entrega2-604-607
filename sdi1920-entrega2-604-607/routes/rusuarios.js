@@ -19,9 +19,6 @@ module.exports = function (app, swig, gestorBD) {
             password: seguro,
             repetirPassword: req.body.repetirPassword
         }
-        console.log(usuario.email)
-        console.log(usuario.passwordSinEncriptar)
-        console.log(usuario.repetirPassword)
         validarDatosRegistroUsuario(usuario, function (errors) {
             if(errors!==null && errors.length>0){
                 res.redirect("/registrarse?mensaje=" + errors);
@@ -29,21 +26,49 @@ module.exports = function (app, swig, gestorBD) {
             else{
                 let usuarioInsertar = {
                     email: usuario.email,
+                    nombre: usuario.nombre,
+                    apellidos: usuario.apellidos,
                     password: usuario.password
                 }
-                gestorBD.insertarUsuario(usuarioInsertar, function (id) {
-                    if (id == null) {
-                        res.redirect("/registrarse?mensaje=Error al registrar usuario");
-                    } else {
-                        res.redirect("/identificarse?mensaje=Nuevo usuario registrado");
+                let criterio = {email:usuarioInsertar.email}
+
+                comprobarEmailRepetido(criterio, function (usuarios) {
+                    if(usuarios!=null){
+                        res.redirect("/registrarse?mensaje=Email repetido en el sistema");
                     }
-                });
+                    else{
+                        gestorBD.insertarUsuario(usuarioInsertar, function (id) {
+                            if (id == null) {
+                                res.redirect("/registrarse?mensaje=Error al registrar usuario");
+                            } else {
+                                res.redirect("/identificarse?mensaje=Nuevo usuario registrado");
+                            }
+                        });
+                    }
+                })
+
             }
 
         })
 
     });
 
+
+    /**
+     * Función que me permite comprobar si un email está repetido en el sistema
+     * @param criterio email del usuario
+     * @param functionCallback devuelve los usuarios si los encontró o en su defecto null
+     */
+    function comprobarEmailRepetido(criterio, functionCallback) {
+            gestorBD.obtenerUsuarios(criterio, function (usuarios) {
+                    if(usuarios!=null){
+                        functionCallback(usuarios);
+                    }
+                    else{
+                        functionCallback(null);
+                    }
+            })
+    }
 
 
     /**
@@ -52,32 +77,23 @@ module.exports = function (app, swig, gestorBD) {
      * Valida si la contraseña coincide con la repetición de esta
      * Valida si ya existe un usuario con ese email en el sistema
      * @param usuario datos del usuario que intenta registrarse
-     * @param functionCallback
+     * @param functionCallback devuelve los errores si se produjeron o en su defecto null
      */
     function validarDatosRegistroUsuario(usuario, functionCallback){
             let errores = new Array();
+        if(usuario.email===null || typeof usuario.email==='undefined' || usuario.email==="")
+            errores.push('email del usuario no puede estar vacío');
+        if(usuario.nombre===null || typeof usuario.nombre==='undefined' || usuario.nombre==="")
+            errores.push('nombre del usuario no puede estar vacío');
+        if(usuario.apellidos===null || typeof usuario.apellidos==='undefined' || usuario.apellidos==="")
+            errores.push('apellidos del usuario no puede estar vacío');
+        if(usuario.password===null || typeof usuario.password==='undefined' || usuario.password==="")
+            errores.push('password del usuario no puede estar vacío');
+        if(usuario.repetirPassword===null || typeof usuario.repetirPassword==='undefined' || usuario.repetirPassword==="")
+            errores.push('password del usuario no puede estar vacío');
+        if(usuario.passwordSinEncriptar!==usuario.repetirPassword)
+            errores.push('las contraseñas deben coincidir');
 
-            if(usuario.email===null || typeof usuario.email==='undefined' || usuario.email==="")
-                errores.push('email del usuario no puede estar vacío');
-            if(usuario.nombre===null || typeof usuario.nombre==='undefined' || usuario.nombre==="")
-                errores.push('nombre del usuario no puede estar vacío');
-            if(usuario.apellidos===null || typeof usuario.apellidos==='undefined' || usuario.apellidos==="")
-                errores.push('apellidos del usuario no puede estar vacío');
-            if(usuario.password===null || typeof usuario.password==='undefined' || usuario.password==="")
-                errores.push('password del usuario no puede estar vacío');
-            if(usuario.repetirPassword===null || typeof usuario.repetirPassword==='undefined' || usuario.repetirPassword==="")
-                errores.push('password del usuario no puede estar vacío');
-            if(usuario.passwordSinEncriptar!==usuario.repetirPassword)
-                errores.push('repetición de contraseña inválida');
-
-            let criterio = {
-                email: usuario.email,
-                password:usuario.password
-            }
-            gestorBD.obtenerUsuarios(criterio, function (usuarios) {
-            if(usuarios!=null)
-                errores.push('el email ya existe en el sistema');
-            })
 
         if(errores.length<=0)
                 functionCallback(null);
