@@ -56,9 +56,12 @@ module.exports = function (app, swig, gestorBD) {
     app.get('/listaUsuarios', function (req, res) {
         let criterio={};
         if(req.query.busqueda!=null){
-            criterio = {"nombre": {$regex: ".*" + req.query.busqueda + ".*"},
-                "apellidos": {$regex: ".*" + req.query.busqueda + ".*"},
-                "email": {$regex: ".*" + req.query.busqueda + ".*"}
+            criterio = {
+                $or: [
+                    {"nombre": {$regex: ".*" + req.query.busqueda + ".*", $options: "i"}},
+                    {"apellidos": {$regex: ".*" + req.query.busqueda + ".*", $options: "i"}},
+                    {"email": {$regex: ".*" + req.query.busqueda + ".*", $options: "i"}}
+                ]
             };
         }
         let pg = parseInt(req.query.pg); // Es String !!!
