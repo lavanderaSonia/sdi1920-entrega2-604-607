@@ -32,9 +32,8 @@ module.exports = function (app, swig, gestorBD) {
                     password: usuario.password
                 }
                 let criterio = {email:usuarioInsertar.email}
-
                 comprobarEmailRepetido(criterio, function (usuarios) {
-                    if(usuarios!=null){
+                    if(usuarios!=null && usuarios.length>0){
                         res.redirect("/registrarse?mensaje=Email repetido en el sistema");
                     }
                     else{
@@ -42,7 +41,7 @@ module.exports = function (app, swig, gestorBD) {
                             if (id == null) {
                                 res.redirect("/registrarse?mensaje=Error al registrar usuario");
                             } else {
-                                res.redirect("/identificarse?mensaje=Nuevo usuario registrado");
+                                res.redirect("/listaUsuarios?mensaje=Nuevo usuario registrado");
                             }
                         });
                     }
@@ -55,6 +54,47 @@ module.exports = function (app, swig, gestorBD) {
     });
 
 
+    app.get('/listaUsuarios', function (req, res) {
+        let criterio={};
+        if(req.query.busqueda!=null){
+            criterio = {
+                $or: [
+                    {"nombre": {$regex: ".*" + req.query.busqueda + ".*", $options: "i"}},
+                    {"apellidos": {$regex: ".*" + req.query.busqueda + ".*", $options: "i"}},
+                    {"email": {$regex: ".*" + req.query.busqueda + ".*", $options: "i"}}
+                ]
+            };
+        }
+        let pg = parseInt(req.query.pg); // Es String !!!
+        if (req.query.pg == null) {
+            // Puede no venir el param
+            pg = 1;
+        }
+        gestorBD.obtenerUsuariosPg(criterio, pg, function (usuarios, total) {
+            if (usuarios == null) {
+                res.send("Error al listar ");
+            } else {
+                let ultimaPg = total / 4;
+                if (total % 4 > 0) { // Sobran decimales
+                    ultimaPg = ultimaPg + 1;
+                }
+                let paginas = []; // paginas mostrar
+                for (let i = pg - 2; i <= pg + 2; i++) {
+                    if (i > 0 && i <= ultimaPg) {
+                        paginas.push(i);
+                    }
+                }
+                let respuesta = swig.renderFile('views/blistaUsuarios.html', {
+                    usuarios: usuarios, paginas: paginas, actual: pg
+                });
+                res.send(respuesta);
+            }
+        });
+    })
+
+
+
+
     /**
      * Función que me permite comprobar si un email está repetido en el sistema
      * @param criterio email del usuario
@@ -62,7 +102,7 @@ module.exports = function (app, swig, gestorBD) {
      */
     function comprobarEmailRepetido(criterio, functionCallback) {
             gestorBD.obtenerUsuarios(criterio, function (usuarios) {
-                    if(usuarios!=null){
+                    if(usuarios!=null && usuarios.length>0){
                         functionCallback(usuarios);
                     }
                     else{
