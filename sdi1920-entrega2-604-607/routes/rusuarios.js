@@ -22,7 +22,7 @@ module.exports = function (app, swig, gestorBD) {
         }
         validarDatosRegistroUsuario(usuario, function (errors) {
             if(errors!==null && errors.length>0){
-                res.redirect("/registrarse?mensaje=" + errors);
+                res.redirect("/registrarse?mensaje=" + errors +  "&tipoMensaje=alert-danger ");
             }
             else{
                 let usuarioInsertar = {
@@ -34,14 +34,14 @@ module.exports = function (app, swig, gestorBD) {
                 let criterio = {email:usuarioInsertar.email}
                 comprobarEmailRepetido(criterio, function (usuarios) {
                     if(usuarios!=null && usuarios.length>0){
-                        res.redirect("/registrarse?mensaje=Email repetido en el sistema");
+                        res.redirect("/registrarse?mensaje=Email repetido en el sistema&tipoMensaje=alert-danger");
                     }
                     else{
                         gestorBD.insertarUsuario(usuarioInsertar, function (id) {
                             if (id == null) {
-                                res.redirect("/registrarse?mensaje=Error al registrar usuario");
+                                res.redirect("/registrarse?mensaje=Error al registrar usuario&tipoMensaje=alert-danger");
                             } else {
-                                res.redirect("/listaUsuarios?mensaje=Nuevo usuario registrado");
+                                res.redirect("/identificarse?mensaje=Nuevo usuario registrado");
                             }
                         });
                     }
@@ -85,7 +85,7 @@ module.exports = function (app, swig, gestorBD) {
                     }
                 }
                 let respuesta = swig.renderFile('views/blistaUsuarios.html', {
-                    usuarios: usuarios, paginas: paginas, actual: pg
+                    usuarios: usuarios, paginas: paginas, actual: pg, busqueda: req.query.busqueda
                 });
                 res.send(respuesta);
             }
@@ -169,9 +169,9 @@ module.exports = function (app, swig, gestorBD) {
                 req.session.usuario = usuarios[0].email;
                 // Indicamos que hay un usario en sesión en sessionStorage
                 // para obtenerlo en base.html sin pasar el usuario en cada respuesta
-                sessionStorage.setItem("usuario", true);
+                //sessionStorage.setItem("usuario", true);
                 // TODO: redirigir a página de listar usuarios
-                res.redirect("");
+                res.redirect("/listaUsuarios");
             }
         });
     });
