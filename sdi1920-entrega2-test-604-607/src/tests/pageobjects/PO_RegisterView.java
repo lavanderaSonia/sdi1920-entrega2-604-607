@@ -11,11 +11,11 @@ public class PO_RegisterView extends PO_NavView{
 		email.click();
 		email.clear();
 		email.sendKeys(emailp);
-		WebElement name = driver.findElement(By.name("name"));
+		WebElement name = driver.findElement(By.name("nombre"));
 		name.click();
 		name.clear();
 		name.sendKeys(namep);
-		WebElement lastName = driver.findElement(By.name("lastName"));
+		WebElement lastName = driver.findElement(By.name("apellidos"));
 		lastName.click();
 		lastName.clear();
 		lastName.sendKeys(lastNamep);
@@ -23,7 +23,7 @@ public class PO_RegisterView extends PO_NavView{
 		password.click();
 		password.clear();
 		password.sendKeys(passwordp);
-		WebElement confirmpassword = driver.findElement(By.name("passwordConfirm"));
+		WebElement confirmpassword = driver.findElement(By.name("repetirPassword"));
 		confirmpassword.click();
 		confirmpassword.clear();
 		confirmpassword.sendKeys(confirmpasswordp);
