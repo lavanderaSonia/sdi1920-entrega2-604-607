@@ -97,6 +97,7 @@ routerUsuarioSession.use(function (req, res, next) {
 app.use("/usuarios", routerUsuarioSession);
 app.use("/usuario/amigos", routerUsuarioSession);
 app.use("/peticion", routerUsuarioSession);
+app.use("/invitaciones", routerUsuarioSession);
 
 
 app.use(express.static('public'));
@@ -110,7 +111,7 @@ app.set('crypto', crypto);
 
 //Rutas/controladores por lógica
 require("./routes/rusuarios")(app, swig, gestorBD); //(app,param1, param2, etc.)
-require("./routes/ramigos")(app, swig, gestorBD);
+require("./routes/rinvitaciones")(app, swig, gestorBD);
 
 app.get('/', function (req, res) {
     res.redirect('/identificarse');

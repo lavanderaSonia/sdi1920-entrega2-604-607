@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block titulo %} Registrar usuario {% endblock %}
+
+{% block contenido_principal %}
+<h2>Invitaciones de amistad recibidas</h2>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Nombre</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for invitacion in invitaciones %}
+        <tr>
+            <td>{{ invitacion.nombre }}</td>
+            <td><a href="/invitaciones/aceptar/{{ invitacion.email_emisor }}">Aceptar</a>
+            <a class="text-danger" href="/invitaciones/rechazar/{{ invitacion.email_emisor }}">Rechazar</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<!-- Paginación mostrar la actual y 2 anteriores y dos siguientes -->
+<div class="row text-center">
+    <ul class="pagination">
+        {% for pagina in paginas %}
+        <li class="page-item" id="pi-{{ pagina }}">
+            <a class="page-link" href="/invitaciones/listar?pg= {{ pagina }}"> {{ pagina }}</a>
+        </li>
+        {% endfor %}
+        <script>
+            $( "#pi-{{ actual }}" ).addClass("active");
+        </script>
+    </ul>
+</div>
+{% endblock %}
