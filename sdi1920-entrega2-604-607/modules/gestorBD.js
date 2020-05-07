@@ -74,6 +74,11 @@ module.exports = {
             }
         });
     },
+    /**
+     * Función que me permite obtener las invitaciones de la base de datos
+     * @param criterio por el que queremos buscar
+     * @param funcionCallback
+     */
     obtenerInvitaciones : function(criterio, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
@@ -91,6 +96,36 @@ module.exports = {
             }
         });
     },
+    /**
+     * Función que me permite obtener las invitaciones de la aplicación paginadas
+     * @param criterio por el que queremos buscar
+     * @param pg número de páginas
+     * @param funcionCallback
+     */
+    obtenerInvitacionessPg: function (criterio, pg, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('invitaciones');
+                collection.count(function (err, count) {
+                    collection.find(criterio).skip((pg - 1) * 5).limit(5).toArray(function (err, invitaciones) {
+                        if (err) {
+                            funcionCallback(null);
+                        } else {
+                            funcionCallback(invitaciones, count);
+                        }
+                        db.close();
+                    });
+                });
+            }
+        });
+    },
+    /**
+     * Función que permite insertar invitaciones en base de datos
+     * @param invitacion invitacion que queremos insertar
+     * @param funcionCallback
+     */
     insertarInvitacion : function(invitacion, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
