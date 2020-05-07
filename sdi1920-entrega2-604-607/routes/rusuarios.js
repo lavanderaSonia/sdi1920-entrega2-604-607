@@ -160,10 +160,21 @@ module.exports = function (app, swig, gestorBD) {
                     }
                 }
 
-                let respuesta = swig.renderFile('views/busuarios.html', {
-                    usuarios: usuarios, paginas: paginas, actual: pg, busqueda: req.query.busqueda, email:req.session.usuario
+                gestorBD.obtenerUsuarios({ "email" : req.session.usuario }, function(usuarioSesion){
+                    if(usuarios == null || usuarios.length == 0)
+                        res.send("Se ha producido un error");
+                    else {
+                        let respuesta = swig.renderFile('views/busuarios.html', {
+                            usuarios: usuarios,
+                            paginas: paginas,
+                            actual: pg,
+                            busqueda: req.query.busqueda,
+                            email: req.session.usuario,
+                            amigos: usuarioSesion[0].amigos
+                        });
+                        res.send(respuesta);
+                    }
                 });
-                res.send(respuesta);
             }
         });
     })

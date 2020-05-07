@@ -33,7 +33,10 @@
             <td>{{ usuario.nombre }}</td>
             <td>{{ usuario.apellidos }}</td>
             <td>{{ usuario.email }}</td>
-            <td>{% if usuario.email == usuarioSesion %}
+            <td>{% if usuario.email == email %}
+
+                {% elif amigos.includes(usuario.email) %}
+                    Ya sois amigos
                 {% else %}
                     <a href="/peticion/{{ usuario.email }}">Añadir amigo</a>
                 {% endif %}

@@ -96,7 +96,7 @@ routerUsuarioSession.use(function (req, res, next) {
 //Aplicar routerUsuarioSession
 app.use("/usuarios", routerUsuarioSession);
 app.use("/usuario/amigos", routerUsuarioSession);
-
+app.use("/peticion", routerUsuarioSession);
 
 
 app.use(express.static('public'));

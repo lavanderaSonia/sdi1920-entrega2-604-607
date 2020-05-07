@@ -8,36 +8,41 @@ module.exports = function (app, swig, gestorBD) {
             return;
         }
 
-        // TODO Comprobamos que el usuario en sesión y al que se quiere enviar la petición no son amigos ya
-        //if(req.session.usuario.amigos != null && res.session.usuario.amigos.find( {"" : gestorBD.mongo.ObjectID(id) }).length != 0 )
-        //    res.redirect("/listaUsuarios?mensaje=Ya eres amigo de " + result[0].nombre + ".");
-
-        gestorBD.obtenerUsuarios( {"email" : req.params.email }, function(usuarios) {
-            if(usuarios.length == 0)
-                res.redirect("/listaUsuarios?mensaje=Usuario no encontrado.");
-            else {
-                // Comprobar que no se ha enviado ya la petición
-                gestorBD.obtenerInvitaciones({"email_emisor" : req.session.usuario,
-                    "email_receptor" : usuarios[0].email }, function(result) {
-                    if(result != null && result.length > 0)
-                        res.redirect("/listaUsuarios?mensaje=Ya le has enviado una invitación a " + usuarios[0].nombre + ".");
+        // Comprobamos que el usuario en sesión y al que se quiere enviar la petición no son amigos ya
+        gestorBD.obtenerUsuarios({"email" : req.session.usuario }, function(usuarios){
+            if(usuarios == null || usuarios.length == 0)
+                res.redirect("/usuarios?mensaje=Se ha producido un error.&tipoMensaje=alert-danger");
+            else if(usuario[0].amigos.includes(req.params.email))
+                res.redirect("/listaUsuarios?mensaje=Ya eres amigo de " + result[0].nombre + ".");
+            else{
+                gestorBD.obtenerUsuarios( {"email" : req.params.email }, function(usuarios) {
+                    if(usuarios.length == 0)
+                        res.redirect("/usuarios?mensaje=Usuario no encontrado.");
                     else {
-                        // Comprobar que no se ha recibido una petición de la otra persona
-                        gestorBD.obtenerInvitaciones({"email_receptor" : req.session.usuario,
-                            "email_emisor" : usuarios[0].email } , function(result) {
+                        // Comprobar que no se ha enviado ya la petición
+                        gestorBD.obtenerInvitaciones({"email_emisor" : req.session.usuario,
+                            "email_receptor" : usuarios[0].email }, function(result) {
                             if(result != null && result.length > 0)
-                                res.redirect("/listaUsuarios?mensaje=Ya tienes una invitación de " + usuarios[0].nombre + ".");
+                                res.redirect("/usuarios?mensaje=Ya le has enviado una invitación a " + usuarios[0].nombre + ".");
                             else {
-                                let invitacion = {
-                                    email_emisor : req.session.usuario,
-                                    email_receptor : usuarios[0].email
-                                }
-                                gestorBD.insertarInvitacion(invitacion, function(resultInsertar) {
-                                    if(resultInsertar == null)
-                                        res.redirect("/listaUsuarios?mensaje=Se ha producido un error.&tipoMensaje=alert-danger");
-                                    else
-                                        res.redirect("/listaUsuarios?mensaje=Invitación enviada correctamente a " + usuarios[0].nombre + ".");
-                                })
+                                // Comprobar que no se ha recibido una petición de la otra persona
+                                gestorBD.obtenerInvitaciones({"email_receptor" : req.session.usuario,
+                                    "email_emisor" : usuarios[0].email } , function(result) {
+                                    if(result != null && result.length > 0)
+                                        res.redirect("/usuarios?mensaje=Ya tienes una invitación de " + usuarios[0].nombre + ".");
+                                    else {
+                                        let invitacion = {
+                                            email_emisor : req.session.usuario,
+                                            email_receptor : usuarios[0].email
+                                        }
+                                        gestorBD.insertarInvitacion(invitacion, function(resultInsertar) {
+                                            if(resultInsertar == null)
+                                                res.redirect("/usuarios?mensaje=Se ha producido un error.&tipoMensaje=alert-danger");
+                                            else
+                                                res.redirect("/usuarios?mensaje=Invitación enviada correctamente a " + usuarios[0].nombre + ".");
+                                        })
+                                    }
+                                });
                             }
                         });
                     }
