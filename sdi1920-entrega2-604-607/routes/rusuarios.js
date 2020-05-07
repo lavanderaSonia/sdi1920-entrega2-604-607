@@ -1,8 +1,6 @@
 module.exports = function (app, swig, gestorBD) {
 
-    app.get("/usuarios", function (req, res) {
-        res.send("ver usuarios");
-    });
+
 
     app.get("/registrarse", function (req, res) {
         let respuesta = swig.renderFile('views/bregistro.html', {});
@@ -67,17 +65,66 @@ module.exports = function (app, swig, gestorBD) {
            email: req.session.usuario
        }
 
-       gestorBD.obtenerUsuarios(criterio, function (usuarios) {
-           if(usuarios==null || usuarios.length==0){
-               res.send("Error al listar usuarios");
-           }
-           else{
-              amigos = [];
-              amigos = usuarios[0].amigos;
-           }
-       })
+       let amigos = [];
+        gestorBD.obtenerUsuarios(criterio, function (usuarios, total) {
+                if(usuarios==null){
+                    res.send("Error al listar  usuarios");
+                }
+                else{
+                    //Obtengo los amigos
+                    amigos = usuarios[0].amigos;
+                    obtenerUsuariosDeLosEmails(req, res, amigos);
+                }
+        })
 
     })
+
+    /**
+     * Me permite obtener los usuarios amigos del usuario en sesión a partir de los emails
+     * @param req
+     * @param res
+     * @param emails array con los emails de los amigos
+     * @param paginas páginas de la paginación
+     * @param pg página actual de la paginación
+     */
+    function obtenerUsuariosDeLosEmails(req, res, emails){
+        var criterio = {
+            email: {
+                $in: emails
+            }
+        };
+
+        let pg = parseInt(req.query.pg); // Es String !!!
+        if (req.query.pg == null) {
+            // Puede no venir el param
+            pg = 1;
+        }
+        gestorBD.obtenerUsuariosPg(criterio, pg, function (amigos, total) {
+            if(amigos==null){
+                res.send("Error al buscar usuarios por emails");
+            }
+            else{
+
+                let ultimaPg = total / 4;
+                if (total % 4 > 0) { // Sobran decimales
+                    ultimaPg = ultimaPg + 1;
+                }
+                let paginas = []; // paginas mostrar
+                for (let i = pg - 2; i <= pg + 2; i++) {
+                    if (i > 0 && i <= ultimaPg) {
+                        paginas.push(i);
+                    }
+                }
+
+                let respuesta = swig.renderFile('views/bamigos.html', {
+                    amigos: amigos, paginas: paginas, actual: pg, email:req.session.usuario
+                });
+                res.send(respuesta);
+            }
+        })
+
+
+    };
 
     /**
      * Permite listar todos los usuarios de la aplicación
@@ -114,6 +161,7 @@ module.exports = function (app, swig, gestorBD) {
                         paginas.push(i);
                     }
                 }
+
                 let respuesta = swig.renderFile('views/busuarios.html', {
                     usuarios: usuarios, paginas: paginas, actual: pg, busqueda: req.query.busqueda, email:req.session.usuario
                 });

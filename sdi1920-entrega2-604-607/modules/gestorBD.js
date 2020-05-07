@@ -74,41 +74,4 @@ module.exports = {
             }
         });
     },
-    obtenerAmigos: function (criterio, functionCallback) {
-        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
-            if (err) {
-                funcionCallback(null);
-            } else {
-                let collection = db.collection('amigos');
-                collection.find(criterio).toArray(function (err, amigos) {
-                    if (err) {
-                        funcionCallback(null);
-                    } else {
-                        funcionCallback(amigos);
-                    }
-                    db.close();
-                });
-            }
-        });
-    },
-    obtenerAmigosPg:function (criterio, pg, funcionCallback) {
-        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
-            if (err) {
-                funcionCallback(null);
-            } else {
-                let collection = db.collection('amigos');
-                collection.count(function (err, count) {
-                    collection.find(criterio).skip((pg - 1) * 4).limit(4).toArray(function (err, amigos) {
-                        if (err) {
-                            funcionCallback(null);
-                        } else {
-                            funcionCallback(amigos, count);
-                        }
-                        db.close();
-                    });
-                });
-            }
-        });
-
-    }
 };
