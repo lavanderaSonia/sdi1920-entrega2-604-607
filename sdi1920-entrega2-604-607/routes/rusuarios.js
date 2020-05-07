@@ -1,14 +1,17 @@
 module.exports = function (app, swig, gestorBD) {
 
-    app.get("/usuarios", function (req, res) {
-        res.send("ver usuarios");
-    });
+
 
     app.get("/registrarse", function (req, res) {
         let respuesta = swig.renderFile('views/bregistro.html', {});
         res.send(respuesta);
     });
 
+    /**
+     * Permite registrar al usuario
+     * Se validan los datos de registro que el usuario inserta mediante el metodo validarDatosRegistroUsuario
+     * Además se comprueba que el email pasado no está repetido mediante el método comprobarEmailRepetido
+     */
     app.post('/usuario', function (req, res) {
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
@@ -22,26 +25,27 @@ module.exports = function (app, swig, gestorBD) {
         }
         validarDatosRegistroUsuario(usuario, function (errors) {
             if(errors!==null && errors.length>0){
-                res.redirect("/registrarse?mensaje=" + errors);
+                res.redirect("/registrarse?mensaje=" + errors +  "&tipoMensaje=alert-danger ");
             }
             else{
                 let usuarioInsertar = {
                     email: usuario.email,
                     nombre: usuario.nombre,
                     apellidos: usuario.apellidos,
-                    password: usuario.password
+                    password: usuario.password,
+                    amigos: []
                 }
                 let criterio = {email:usuarioInsertar.email}
                 comprobarEmailRepetido(criterio, function (usuarios) {
                     if(usuarios!=null && usuarios.length>0){
-                        res.redirect("/registrarse?mensaje=Email repetido en el sistema");
+                        res.redirect("/registrarse?mensaje=Email repetido en el sistema&tipoMensaje=alert-danger");
                     }
                     else{
                         gestorBD.insertarUsuario(usuarioInsertar, function (id) {
                             if (id == null) {
-                                res.redirect("/registrarse?mensaje=Error al registrar usuario");
+                                res.redirect("/registrarse?mensaje=Error al registrar usuario&tipoMensaje=alert-danger");
                             } else {
-                                res.redirect("/listaUsuarios?mensaje=Nuevo usuario registrado");
+                                res.redirect("/identificarse?mensaje=Nuevo usuario registrado");
                             }
                         });
                     }
@@ -53,8 +57,81 @@ module.exports = function (app, swig, gestorBD) {
 
     });
 
+    /**
+     * Me permite obtener los amigos del usuario en sesión
+     */
+    app.get('/usuario/amigos', function (req, res) {
+       let criterio = {
+           email: req.session.usuario
+       }
 
-    app.get('/listaUsuarios', function (req, res) {
+       let amigos = [];
+        gestorBD.obtenerUsuarios(criterio, function (usuarios, total) {
+                if(usuarios==null){
+                    res.send("Error al listar  usuarios");
+                }
+                else{
+                    //Obtengo los amigos
+                    amigos = usuarios[0].amigos;
+                    obtenerUsuariosDeLosEmails(req, res, amigos);
+                }
+        })
+
+    })
+
+    /**
+     * Me permite obtener los usuarios amigos del usuario en sesión a partir de los emails
+     * @param req
+     * @param res
+     * @param emails array con los emails de los amigos
+     * @param paginas páginas de la paginación
+     * @param pg página actual de la paginación
+     */
+    function obtenerUsuariosDeLosEmails(req, res, emails){
+        var criterio = {
+            email: {
+                $in: emails
+            }
+        };
+
+        let pg = parseInt(req.query.pg); // Es String !!!
+        if (req.query.pg == null) {
+            // Puede no venir el param
+            pg = 1;
+        }
+        gestorBD.obtenerUsuariosPg(criterio, pg, function (amigos, total) {
+            if(amigos==null){
+                res.send("Error al buscar usuarios por emails");
+            }
+            else{
+
+                let ultimaPg = total / 4;
+                if (total % 4 > 0) { // Sobran decimales
+                    ultimaPg = ultimaPg + 1;
+                }
+                let paginas = []; // paginas mostrar
+                for (let i = pg - 2; i <= pg + 2; i++) {
+                    if (i > 0 && i <= ultimaPg) {
+                        paginas.push(i);
+                    }
+                }
+
+                let respuesta = swig.renderFile('views/bamigos.html', {
+                    amigos: amigos, paginas: paginas, actual: pg, email:req.session.usuario
+                });
+                res.send(respuesta);
+            }
+        })
+
+
+    };
+
+    /**
+     * Permite listar todos los usuarios de la aplicación
+     * Mediante la búsqueda de texto nos permite filtrar los usuarios
+     * Además también devuelve una lista paginada de usuarios
+     */
+    app.get('/usuarios', function (req, res) {
         let criterio={};
         if(req.query.busqueda!=null){
             criterio = {
@@ -84,8 +161,9 @@ module.exports = function (app, swig, gestorBD) {
                         paginas.push(i);
                     }
                 }
-                let respuesta = swig.renderFile('views/blistaUsuarios.html', {
-                    usuarios: usuarios, paginas: paginas, actual: pg
+
+                let respuesta = swig.renderFile('views/busuarios.html', {
+                    usuarios: usuarios, paginas: paginas, actual: pg, busqueda: req.query.busqueda, email:req.session.usuario
                 });
                 res.send(respuesta);
             }
@@ -102,11 +180,11 @@ module.exports = function (app, swig, gestorBD) {
      */
     function comprobarEmailRepetido(criterio, functionCallback) {
             gestorBD.obtenerUsuarios(criterio, function (usuarios) {
-                    if(usuarios!=null && usuarios.length>0){
-                        functionCallback(usuarios);
+                    if(usuarios==null || usuarios.length==0){
+                        functionCallback(null);
                     }
                     else{
-                        functionCallback(null);
+                        functionCallback(usuarios);
                     }
             })
     }

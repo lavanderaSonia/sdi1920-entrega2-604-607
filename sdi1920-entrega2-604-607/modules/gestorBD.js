@@ -5,7 +5,11 @@ module.exports = {
         this.mongo = mongo;
         this.app = app;
     },
-    // Devuelve una lista de usuarios que cumplen cierto criterio
+    /**
+     * Función que nos permite obtener la lista de usuarios según criterio pasado como parámetro
+     * @param criterio criterio que le pasamos para buscar usuarios
+     * @param funcionCallback
+     */
     obtenerUsuarios: function (criterio, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
@@ -23,6 +27,11 @@ module.exports = {
             }
         });
     },
+    /**
+     * Función que permite insertar los usuarios en base de datos
+     * @param usuario usuario que queremos insertar
+     * @param funcionCallback
+     */
     insertarUsuario: function (usuario, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
@@ -40,6 +49,12 @@ module.exports = {
             }
         });
     },
+    /**
+     * Función que me permite obtener los usuarios de la aplicación paginados
+     * @param criterio por el que queremos buscar
+     * @param pg número de páginas
+     * @param funcionCallback
+     */
     obtenerUsuariosPg: function (criterio, pg, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
@@ -59,3 +74,4 @@ module.exports = {
             }
         });
     },
+};
