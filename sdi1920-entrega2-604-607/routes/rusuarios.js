@@ -167,19 +167,15 @@ module.exports = function (app, swig, gestorBD) {
                     "&tipoMensaje=alert-danger ");
             } else {
                 req.session.usuario = usuarios[0].email;
-                // Indicamos que hay un usario en sesión en sessionStorage
-                // para obtenerlo en base.html sin pasar el usuario en cada respuesta
-                sessionStorage.setItem("usuario", true);
-                // TODO: redirigir a página de listar usuarios
-                res.redirect("");
+                res.redirect("/usuarios");
             }
         });
     });
 
+    // Sale de sesión y redirige a la página de inicio de sesión
     app.get('/desconectarse', function (req, res) {
         req.session.usuario = null;
-        sessionStorage.setItem("usuario", false);
-        res.send("Usuario desconectado");
+        res.redirect("/identificarse");
     });
 
 }
