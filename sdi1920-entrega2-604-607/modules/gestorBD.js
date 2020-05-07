@@ -142,5 +142,50 @@ module.exports = {
                 });
             }
         });
+    },
+    /**
+     * Modifica el usuario indicado por el criterio
+     * @param criterio, criterio a seguir para buscar el usuario
+     * @param usuario, usuario con nuevos datos
+     * @param funcionCallback
+     */
+    modificarUsuario : function(criterio, usuario, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('usuarios');
+                collection.update(criterio, {$set: usuario}, function(err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+    /**
+     * Elimina la invitación indicada por el criterio
+     * @param criterio, criterio a seguir
+     * @param funcionCallback
+     */
+    eliminarInvitacion : function(criterio, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('invitaciones');
+                collection.remove(criterio, function (err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
     }
 };

@@ -83,4 +83,76 @@ module.exports = function (app, swig, gestorBD) {
 
     });
 
+    // Aceptar una invitación recibida
+    app.get("/invitaciones/aceptar/:email", function(req, res) {
+        // Comprobamos que exite una invitación
+        gestorBD.obtenerInvitaciones({ "email_receptor" : req.session.usuario, "email_emisor" : req.params.email },
+            function(result) {
+            if(result == null || result.length == 0)
+                res.redirect("/invitaciones/listar?mensaje=No se encuentra la invitación de " + req.params.email + ".");
+            else {
+                añadirAmigos(req.session.usuario, req.params.email, function(result) {
+                    if(result == null)
+                        res.redirect("/invitaciones/listar?mensaje=Se ha producido un error.&tipoMensaje=alert-danger");
+                    else {
+                        // Si se actualiza bien eliminamos la invitación
+                        gestorBD.eliminarInvitacion( { "email_receptor" : req.session.usuario, "email_emisor" : req.params.email }, function(result) {
+                            if(result == null)
+                                res.redirect("/invitaciones/listar?mensaje=Se ha producido un error.&tipoMensaje=alert-danger");
+                            else {
+                                res.redirect("/invitaciones/listar?mensaje=¡Invitación aceptada con éxito!");
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    app.get("/invitaciones/rechazar/:email", function(req, res) {
+        gestorBD.eliminarInvitacion( { "email_receptor" : req.session.usuario, "email_emisor" : req.params.email }, function(result) {
+            if(result == null)
+                res.redirect("/invitaciones/listar?mensaje=Se ha producido un error.&tipoMensaje=alert-danger");
+            else {
+                res.redirect("/invitaciones/listar?mensaje=Invitación rechazada.");
+            }
+        });
+    });
+
+    /**
+     * Establece como amigos a los usuarios con los emails indicados, de manera que A es
+     * amigo de B y B es amigo de A
+     * @param emailA, email del usuario A
+     * @param emailB, email del usuario B
+     */
+    function añadirAmigos(emailA, emailB, funcionCallback) {
+        gestorBD.obtenerUsuarios({
+            $or:[
+                { "email": emailA },
+                { "email" : emailB }
+            ]}, function(usuarios){
+                if(usuarios == null || usuarios.length == 0)
+                    funcionCallback(null);
+                else {
+                    usuarios[0].amigos.push( usuarios[0].email == emailA ? emailB : emailA );
+                    usuarios[1].amigos.push( usuarios[1].email == emailA ? emailB : emailA );
+                    // Actualizamos el primer usuario
+                    gestorBD.modificarUsuario( { "email" : usuarios[0].email }, usuarios[0], function(result){
+                        if(result == null)
+                            funcionCallback(null);
+                        else{
+                            // Modificamos el otro usuario
+                            gestorBD.modificarUsuario( { "email" : usuarios[1].email }, usuarios[1], function(result){
+                                if(result == null)
+                                    funcionCallback(null);
+                                else{
+                                    funcionCallback(result);
+                                }
+                            });
+                        }
+                    });
+                }
+        });
+    }
 }
+
