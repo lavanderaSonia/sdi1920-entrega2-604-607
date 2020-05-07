@@ -21,17 +21,14 @@
                     <span class="icon-bar"></span>
                 </button>
             </div>
-            <div class="collapse navbar-collapse" id="myNavbar">
-                <ul class="nav navbar-nav">
-                </ul>
-                <ul class="nav navbar-nav navbar-right" id="session">
-
-                </ul>
-            </div>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
-                <li id="mListaUsuarios"><a href="/listaUsuarios">Usuarios</a></li>
+                {% if email!=null %}
+                <li id="mListaUsuarios"><a href="/usuarios">Ver usuarios</a></li>
+                <li id="mListaAmigos"><a href="/usuario/amigos">Ver amigos</a></li>
+
+                {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if usuarioSesion == null %}
