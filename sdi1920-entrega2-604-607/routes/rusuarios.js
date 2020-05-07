@@ -53,7 +53,6 @@ module.exports = function (app, swig, gestorBD) {
 
     });
 
-
     app.get('/listaUsuarios', function (req, res) {
         let criterio={};
         if(req.query.busqueda!=null){
@@ -85,15 +84,12 @@ module.exports = function (app, swig, gestorBD) {
                     }
                 }
                 let respuesta = swig.renderFile('views/blistaUsuarios.html', {
-                    usuarios: usuarios, paginas: paginas, actual: pg
+                    usuarios: usuarios, paginas: paginas, actual: pg, usuarioSesion: req.session.usuario
                 });
                 res.send(respuesta);
             }
         });
     })
-
-
-
 
     /**
      * Función que me permite comprobar si un email está repetido en el sistema
@@ -110,7 +106,6 @@ module.exports = function (app, swig, gestorBD) {
                     }
             })
     }
-
 
     /**
      * Función que nos permite validar los campos del formulario de registro del usuario
@@ -167,7 +162,7 @@ module.exports = function (app, swig, gestorBD) {
                     "&tipoMensaje=alert-danger ");
             } else {
                 req.session.usuario = usuarios[0].email;
-                res.redirect("/usuarios");
+                res.redirect("/listaUsuarios");
             }
         });
     });

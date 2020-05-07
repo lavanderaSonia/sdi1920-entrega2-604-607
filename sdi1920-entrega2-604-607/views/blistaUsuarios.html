@@ -34,6 +34,11 @@
             <td>{{ usuario.nombre }}</td>
             <td>{{ usuario.apellidos }}</td>
             <td>{{ usuario.email }}</td>
+            <td>{% if usuario.email == usuarioSesion %}
+                {% else %}
+                    <a href="/peticion/{{ usuario.email }}">Añadir amigo</a>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
         </tbody>
