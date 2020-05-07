@@ -9,6 +9,11 @@ module.exports = function (app, swig, gestorBD) {
         res.send(respuesta);
     });
 
+    /**
+     * Permite registrar al usuario
+     * Se validan los datos de registro que el usuario inserta mediante el metodo validarDatosRegistroUsuario
+     * Además se comprueba que el email pasado no está repetido mediante el método comprobarEmailRepetido
+     */
     app.post('/usuario', function (req, res) {
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
@@ -29,7 +34,8 @@ module.exports = function (app, swig, gestorBD) {
                     email: usuario.email,
                     nombre: usuario.nombre,
                     apellidos: usuario.apellidos,
-                    password: usuario.password
+                    password: usuario.password,
+                    amigos: []
                 }
                 let criterio = {email:usuarioInsertar.email}
                 comprobarEmailRepetido(criterio, function (usuarios) {
@@ -53,8 +59,32 @@ module.exports = function (app, swig, gestorBD) {
 
     });
 
+    /**
+     * Me permite obtener los amigos del usuario en sesión
+     */
+    app.get('/usuario/amigos', function (req, res) {
+       let criterio = {
+           email: req.session.usuario
+       }
 
-    app.get('/listaUsuarios', function (req, res) {
+       gestorBD.obtenerUsuarios(criterio, function (usuarios) {
+           if(usuarios==null || usuarios.length==0){
+               res.send("Error al listar usuarios");
+           }
+           else{
+              amigos = [];
+              amigos = usuarios[0].amigos;
+           }
+       })
+
+    })
+
+    /**
+     * Permite listar todos los usuarios de la aplicación
+     * Mediante la búsqueda de texto nos permite filtrar los usuarios
+     * Además también devuelve una lista paginada de usuarios
+     */
+    app.get('/usuarios', function (req, res) {
         let criterio={};
         if(req.query.busqueda!=null){
             criterio = {
@@ -84,8 +114,8 @@ module.exports = function (app, swig, gestorBD) {
                         paginas.push(i);
                     }
                 }
-                let respuesta = swig.renderFile('views/blistaUsuarios.html', {
-                    usuarios: usuarios, paginas: paginas, actual: pg, busqueda: req.query.busqueda
+                let respuesta = swig.renderFile('views/busuarios.html', {
+                    usuarios: usuarios, paginas: paginas, actual: pg, busqueda: req.query.busqueda, email:req.session.usuario
                 });
                 res.send(respuesta);
             }
@@ -102,11 +132,11 @@ module.exports = function (app, swig, gestorBD) {
      */
     function comprobarEmailRepetido(criterio, functionCallback) {
             gestorBD.obtenerUsuarios(criterio, function (usuarios) {
-                    if(usuarios!=null && usuarios.length>0){
-                        functionCallback(usuarios);
+                    if(usuarios==null || usuarios.length==0){
+                        functionCallback(null);
                     }
                     else{
-                        functionCallback(null);
+                        functionCallback(usuarios);
                     }
             })
     }
@@ -171,7 +201,7 @@ module.exports = function (app, swig, gestorBD) {
                 // para obtenerlo en base.html sin pasar el usuario en cada respuesta
                 //sessionStorage.setItem("usuario", true);
                 // TODO: redirigir a página de listar usuarios
-                res.redirect("/listaUsuarios");
+                res.redirect("/usuarios");
             }
         });
     });

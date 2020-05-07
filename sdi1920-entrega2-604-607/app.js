@@ -94,7 +94,7 @@ routerUsuarioSession.use(function (req, res, next) {
 });
 
 //Aplicar routerUsuarioSession
-app.use("/listaUsuarios", routerUsuarioSession);
+app.use("/usuarios", routerUsuarioSession);
 
 
 app.use(express.static('public'));
