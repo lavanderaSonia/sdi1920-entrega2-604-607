@@ -27,9 +27,6 @@ module.exports = function(app, gestorBD) {
             });
     });
 
-}
-module.exports = function (app, gestorBD) {
-
     app.get('/api/amigos', function (req, res) {
 
         let criterio = {email: res.usuario};
@@ -96,6 +93,5 @@ module.exports = function (app, gestorBD) {
         })
 
     })
-
 
 }
