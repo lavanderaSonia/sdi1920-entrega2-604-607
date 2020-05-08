@@ -380,16 +380,17 @@ public class Sdi1920Entrega1604607ApplicationTests {
 		PO_NavView.checkElement(driver, "text", "Identificación de usuario");
 	}
 	
-	// Intentar acceder sin estar autenticado a la opción de listado de publicaciones de un usuario
-	// estándar. Se deberá volver al formulario de login.
+	// Intentar acceder sin estar autenticado a la opción de listado
+	// de invitaciones de amistad recibida
+	// de un usuario estándar. Se deberá volver al formulario de login
 	@Test
 	public void prueba21() {
 		// Al principio no estamos logueados, asique intentamos acceder directamente
-		driver.navigate().to(URL + "/publication/list/3");
+		driver.navigate().to(URL + "/invitaciones/listar");
 		// Comprobamos que no nos ha dejado acceder
 		SeleniumUtils.EsperaCargaPaginaNoTexto(driver, "Texto", PO_View.getTimeout());
 		// Comprobamos que nos ha redireccionado al formulario de login
-		PO_NavView.checkElement(driver, "text", "Identifícate");
+		PO_NavView.checkElement(driver, "text", "Identificación de usuario");
 	}
 	
 	//La prueba 22 no se puede realizar ya que obtenemos la lista de usuarios 
