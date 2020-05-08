@@ -15,8 +15,8 @@
         <tbody>
         {% for invitacion in invitaciones %}
         <tr>
-            <td>{{ invitacion.nombre }}</td>
-            <td><a href="/invitaciones/aceptar/{{ invitacion.email_emisor }}">Aceptar</a>
+            <td id="invitacion">{{ invitacion.nombre }}</td>
+            <td><a id="aceptar/{{ invitacion.nombre }}" href="/invitaciones/aceptar/{{ invitacion.email_emisor }}">Aceptar</a>
             <a class="text-danger" href="/invitaciones/rechazar/{{ invitacion.email_emisor }}">Rechazar</a></td>
         </tr>
         {% endfor %}
