@@ -1,6 +1,5 @@
 # Proyecto Red Social Node
 <ul>
-  Integrantes:
   <li>
     Thalía Cuetos Fernández
   </li>
