@@ -66,7 +66,7 @@ module.exports = function (app, swig, gestorBD) {
        }
 
        let amigos = [];
-        gestorBD.obtenerUsuarios(criterio, function (usuarios, total) {
+        gestorBD.obtenerUsuarios(criterio, function (usuarios) {
                 if(usuarios==null){
                     res.send("Error al listar  usuarios");
                 }

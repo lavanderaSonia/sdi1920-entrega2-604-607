@@ -89,7 +89,9 @@ routerUsuarioSession.use(function (req, res, next) {
         next();
     } else {
         console.log("va a : " + req.session.destino);
-        res.redirect("/identificarse");
+        res.redirect("/identificarse" +
+            "?mensaje=Intento de acceso a zona restringida"+
+            "&tipoMensaje=alert-danger ");
     }
 });
 
@@ -112,6 +114,7 @@ app.set('crypto', crypto);
 //Rutas/controladores por lógica
 require("./routes/rusuarios")(app, swig, gestorBD); //(app,param1, param2, etc.)
 require("./routes/rinvitaciones")(app, swig, gestorBD);
+require("./routes/rapiusuarios")(app, swig, gestorBD);
 
 app.get('/', function (req, res) {
     res.redirect('/identificarse');
