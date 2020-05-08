@@ -1,1 +1,11 @@
-# sdi1920-entrega2-604-607
+# Proyecto Red Social Node
+<ul>
+  Integrantes:
+  <li>
+    Thalía Cuetos Fernández
+  </li>
+  <li>
+    Sonia García Lavandera
+  </li>
+  </ul>
+  
