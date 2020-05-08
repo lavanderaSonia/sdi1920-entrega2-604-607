@@ -122,65 +122,75 @@ public class Sdi1920Entrega1604607ApplicationTests {
 
 	}
 
-	// Inicio de sesión con datos válidos (administrador).
-	@Test
-	public void prueba05() {
-		//PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "admin@email.com", "admin");
-		// Comprobar que estamos en la lista de usuarios de administrador
-		PO_View.checkElement(driver, "text", "Usuarios");
-		PO_View.checkElement(driver, "text", "Eliminar");
-	}
-
 	// Inicio de sesión con datos válidos (usuario estándar).
 	@Test
-	public void prueba06() {
-		//PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "usuario@email.com", "usuario");
+	public void prueba05() {
+		PO_HomeView.clickOption(driver, "identificarse", "class", "btn btn-primary");
+		PO_LoginView.fillForm(driver, "thalia@email.com", "123456");
 
 		// Comprobamos que estamos en la página de listar usuarios
-		PO_View.checkElement(driver, "text", "Usuarios");
+		PO_View.checkElement(driver, "text", "Lista usuarios");
 	}
 
 	// Inicio de sesión con datos inválidos (usuario estándar, campo email y
 	// contraseña vacíos)
 	@Test
-	public void prueba07() {
-		//PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+	public void prueba06() {
+		PO_HomeView.clickOption(driver, "identificarse", "class", "btn btn-primary");
 		PO_LoginView.fillForm(driver, "", "");
 		// Comprobar que seguimos en la vista de login
-		PO_View.checkElement(driver, "text", "Login");
+		PO_View.checkElement(driver, "text", "Identificación de usuario");
 	}
 
-	// Inicio de sesión con datos válidos (usuario estándar, email existente, pero
-	// contraseña
+	// Inicio de sesión con datos inválidos
+	// (usuario estándar, email existente, pero contraseña
 	// incorrecta).
 	@Test
-	public void prueba08() {
-		//PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "usuario@email.com", "contraseña");
+	public void prueba07() {
+		PO_HomeView.clickOption(driver, "identificarse", "class", "btn btn-primary");
+		PO_LoginView.fillForm(driver, "thalia@email.com", "contraseña");
+		// Comprobar que estamos en la vista de login
+		PO_View.checkElement(driver, "text", "Identificación de usuario");
 		// Comprobar que ha salido el mensaje de error
-		PO_View.checkElement(driver, "text", "Usuario o contraseña incorrectos.");
+		PO_View.checkElement(driver, "text", "Email o password incorrecto");
 	}
 
-	// Hacer click en la opción de salir de sesión y comprobar que se redirige a la
-	// página de inicio de
+	// Inicio de sesión con datos inválidos 
+	// (usuario estándar, email no existente y contraseña no vacía)
+	@Test
+	public void prueba08() {
+		PO_HomeView.clickOption(driver, "identificarse", "class", "btn btn-primary");
+		PO_LoginView.fillForm(driver, "email@email.com", "contraseña");
+		
+		// Comprobar que estamos en la vista de login
+		PO_View.checkElement(driver, "text", "Identificación de usuario");
+		// Comprobar que ha salido el mensaje de error
+		PO_View.checkElement(driver, "text", "Email o password incorrecto");
+	}
+	
+	// Hacer click en la opción de salir de sesión y comprobar 
+	// que se redirige a la página de inicio de
 	// sesión (Login)
 	@Test
 	public void prueba09() {
-		//PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "admin@email.com", "admin");
+		// Nos identificamos con datos válidos
+		PO_HomeView.clickOption(driver, "identificarse", "class", "btn btn-primary");
+		PO_LoginView.fillForm(driver, "thalia@email.com", "123456");
 
-		PO_HomeView.clickOption(driver, "logout", "class", "btn btn-primary");
-		// Comprobar que estamos en la vista de login
-		PO_View.checkElement(driver, "text", "Password");
+		// Salimos de sesión
+		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
+		
+		// Comprobamos que estamos en la página de inicio de sesión
+		PO_View.checkElement(driver, "text", "Identificación de usuario");
+		
+		// Comprobamos que ya no tenemos la opción de salir de sesión
+		SeleniumUtils.EsperaCargaPaginaNoTexto(driver, "Cerrar sesión", PO_View.getTimeout());
 	}
-
-	// Comprobar que el botón cerrar sesión no está visible si el usuario no está
-	// autenticado
+	
+	// Comprobar que el botón cerrar sesión no está visible si el usuario no está autenticado
 	@Test
 	public void prueba10() {
-		SeleniumUtils.EsperaCargaPaginaNoTexto(driver, "Desconectar", PO_View.getTimeout());
+		SeleniumUtils.EsperaCargaPaginaNoTexto(driver, "Cerrar sesión", PO_View.getTimeout());
 	}
 
 	// [Prueba11] Mostrar el listado de usuarios y comprobar que se muestran todos
