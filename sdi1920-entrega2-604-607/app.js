@@ -56,16 +56,16 @@ routerUsuarioToken.use(function (req, res, next) {
     if (token != null) {
         // verificar el token
         jwt.verify(token, 'secreto', function (err, infoToken) {
-            if (err || (Date.now() / 1000 - infoToken.tiempo) > 240) {
+            if (err || infoToken.usuario == null) {
                 res.status(403); // Forbidden
                 res.json({
                     acceso: false,
-                    error: 'Token invalido o caducado'
+                    error: 'Token inválido'
                 });
-                // También podríamos comprobar que intoToken.usuario existe
                 return;
             } else {
                 // dejamos correr la petición
+                // Añadimos el usuario a la respuesta
                 res.usuario = infoToken.usuario;
                 next();
             }
@@ -112,6 +112,7 @@ app.set('crypto', crypto);
 //Rutas/controladores por lógica
 require("./routes/rusuarios")(app, swig, gestorBD); //(app,param1, param2, etc.)
 require("./routes/rinvitaciones")(app, swig, gestorBD);
+require("./routes/rapiusuarios.js")(app, gestorBD);
 
 app.get('/', function (req, res) {
     res.redirect('/identificarse');
