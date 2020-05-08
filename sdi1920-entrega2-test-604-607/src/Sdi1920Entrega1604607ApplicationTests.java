@@ -282,18 +282,20 @@ public class Sdi1920Entrega1604607ApplicationTests {
 	// (punto siguiente).
 	@Test
 	public void prueba15() {
-		PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "usuario@email.com", "usuario");
+		PO_HomeView.clickOption(driver, "identificarse", "class", "btn btn-primary");
+		PO_LoginView.fillForm(driver, "thalia@email.com", "123456");
 
 		// Ya estamos en la lista de usuarios, asique mandamos una invitación
-		PO_View.checkElement(driver, "id", "send/Thalía").get(0).click();
+		PO_View.checkElement(driver, "id", "send/sonia@email.com").get(0).click();
+		// Comprobamos que sale el mensaje de invitación enviada
+		PO_View.checkElement(driver, "text", "Invitación enviada correctamente a Sonia");
 
 		// Salimos para ir a la otra cuenta
-		PO_HomeView.clickOption(driver, "logout", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "thalia@email.com", "pass");
+		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
+		PO_LoginView.fillForm(driver, "sonia@email.com", "123456");
 		// Comprobamos que ha llegado la invitación
 		PO_PrivateView.goToInvitations(driver);
-		PO_NavView.checkElement(driver, "text", "usuario usuario");
+		PO_NavView.checkElement(driver, "text", "Thalía");
 	}
 
 	// Desde el listado de usuarios de la aplicación, enviar una invitación de
@@ -301,28 +303,28 @@ public class Sdi1920Entrega1604607ApplicationTests {
 	// que ya le habíamos enviado la invitación previamente.
 	@Test
 	public void prueba16() {
-		PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "usuario@email.com", "usuario");
+		PO_HomeView.clickOption(driver, "identificarse", "class", "btn btn-primary");
+		PO_LoginView.fillForm(driver, "thalia@email.com", "123456");
 
-		// Comprobamos que hay un texto que indica que ya se
-		// ha enviado una invitación al usuario de la prueba 15.
-		// Por lo tanto, no hay enlace para enviarla
-		PO_NavView.checkElement(driver, "id", "sent/Thalía");
+		// Intentamos enviar la invitación
+		PO_View.checkElement(driver, "id", "send/edward@email.com").get(0).click();
+		// Comprobamos que sale el mensaje de invitación ya enviada/recibida
+		PO_View.checkElement(driver, "text", "Ya existe una invitación a/de Edward");
 	}
 
 	// Mostrar el listado de invitaciones de amistad recibidas. Comprobar con un
-	// listado que
-	// contenga varias invitaciones recibidas
+	// listado que contenga varias invitaciones recibidas
 	@Test
 	public void prueba17() {
-		PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "thalia@email.com", "pass");
+		// Nos identificamos con un usuario que tenga varias invitaciones
+		PO_HomeView.clickOption(driver, "identificarse", "class", "btn btn-primary");
+		PO_LoginView.fillForm(driver, "edward@email.com", "123456");
 
 		// Comprobamos que hay 2
 		Assert.assertEquals(2, PO_PrivateView.goToInvitations(driver).size());
 		// Comprobamos que son las esperadas
-		PO_NavView.checkElement(driver, "text", "usuario usuario");
-		PO_NavView.checkElement(driver, "text", "admin admin");
+		PO_NavView.checkElement(driver, "text", "Thalía");
+		PO_NavView.checkElement(driver, "text", "Sonia");
 	}
 
 	// Sobre el listado de invitaciones recibidas. Hacer click en el botón/enlace de
@@ -330,15 +332,18 @@ public class Sdi1920Entrega1604607ApplicationTests {
 	// comprobar que dicha solicitud desaparece del listado de invitaciones.
 	@Test
 	public void prueba18() {
-		PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "thalia@email.com", "pass");
+		// Nos identificamos con un usuario que tenga una invitación
+		PO_HomeView.clickOption(driver, "identificarse", "class", "btn btn-primary");
+		PO_LoginView.fillForm(driver, "edward@email.com", "123456");
 
 		PO_PrivateView.goToInvitations(driver);
 		// Aceptamos la invitacion de Sonia
-		PO_NavView.checkElement(driver, "id", "accept/usuario").get(0).click();
+		PO_NavView.checkElement(driver, "id", "aceptar/Sonia").get(0).click();
 
 		// Comprobamos que ya no está
-		SeleniumUtils.EsperaCargaPaginaNoTexto(driver, "usuario usuario", PO_View.getTimeout());
+		SeleniumUtils.EsperaCargaPaginaNoTexto(driver, "Sonia", PO_View.getTimeout());
+		// Comprobamos que aparece el mensaje de invitación aceptada
+		PO_View.checkElement(driver, "text", "¡Invitación aceptada con éxito!");
 	}
 
 	// [Prueba19] Mostrar el listado de amigos de un usuario. Comprobar que el
