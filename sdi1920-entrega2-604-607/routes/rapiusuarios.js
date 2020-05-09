@@ -92,7 +92,6 @@ module.exports = function(app, gestorBD) {
             else{
                 res.status(200);
                 res.json(JSON.stringify(usuarios[0]));
-                //console.log("Api" + JSON.stringify(usuarios[0]))
             }
 
         })

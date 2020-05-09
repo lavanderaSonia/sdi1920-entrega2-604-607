@@ -418,21 +418,25 @@ public class Sdi1920Entrega1604607ApplicationTests {
 		PO_NavView.checkElement(driver, "text", "Prueba 24");
 	}
 
-	// Ir al formulario de crear publicaciones, rellenarla con datos inválidos
-	// (campo título vacío) y
-	// pulsar el botón Submit. Comprobar que se muestra el mensaje de campo
-	// obligatorio.
+	//[Prueba25] 
+	//Acceder a la lista de amigos de un usuario, que al menos tenga tres amigos.
 	@Test
 	public void prueba25() {
-		PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "thalia@email.com", "pass");
+		driver.navigate().to(URL + "/cliente.html");
+		
+		PO_LoginView.fillForm(driver, "sonia@email.com", "123456");
 
-		PO_HomeView.checkElement(driver, "id", "publications-menu").get(0).click();
-		PO_HomeView.checkElement(driver, "@href", "/publication/add").get(0).click();
+		
+		//Comprobamos que son 3 en total 
+		//Thalía y yo + Ana 
+				Assert.assertEquals(3,
+						SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout()).size());
 
-		PO_AddPublicationView.fillForm(driver, " ", " ");
-
-		PO_NavView.checkKey(driver, "Error.publication.title", PO_Properties.getSPANISH());
+				// Comprobamos que son los usuarios esperados
+				PO_View.checkElement(driver, "text", "edward@email.com");
+				PO_View.checkElement(driver, "text", "rut@email.com");
+				PO_View.checkElement(driver, "text", "ana@email.com");
+		
 	}
 
 	// [Prueba26] Mostrar el listado de publicaciones de un usuario y comprobar que
