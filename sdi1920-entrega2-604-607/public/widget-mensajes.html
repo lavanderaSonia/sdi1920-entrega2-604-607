@@ -1,11 +1,28 @@
-<div id="widget-chat">
-    <div class="col-sm-10">
-        <input type="mensaje" class="form-control" name="mensaje"
-               placeholder="Escribe aquí tu mensaje" id="mensaje" />
-        <div class="col-sm-offset-2 col-sm-10">
-            <button type="button" class="btn" id="boton-enviar">Enviar</button>
+<div id="widget-mensajes">
+	<span class="label label-primary" id="usuarioEnSesion">
+		Usuario en sesión:
+	</span>
+
+    <h2 id="nombreUsuario">
+        Chat con el usuario:
+    </h2>
+
+    <div id="mensajes" style="overflow-y: scroll;"></div>
+
+    </div>
+
+    <div class="row">
+        <div>
+            <div class="input-group">
+            <input type="text" class="form-control" name="mensaje"
+                   placeholder="Escribe aquí tu mensaje" id="mensaje" />
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="button" class="btn" id="boton-enviar">Enviar</button>
+            </div>
+        </div>
         </div>
     </div>
+
 </div>
 
 <script src="script/widget-mensajes.js"></script>

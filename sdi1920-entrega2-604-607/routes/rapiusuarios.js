@@ -39,12 +39,14 @@ module.exports = function(app, gestorBD) {
             }
             else{
                 //Ahora necesito obtener los ids de los amigos a partir de los emails
-                obtenerIdsAmigos(req, res, usuarios[0].amigos);
+             //   obtenerIdsAmigos(req, res, usuarios[0].amigos);
+                res.status(200);
+                res.json(JSON.stringify(usuarios[0].amigos));
             }
         })
     })
 
-    function obtenerIdsAmigos(req, res, amigos) {
+  /**  function obtenerIdsAmigos(req, res, amigos) {
         if(amigos==null){
             res.status(500);
             res.json({error: "se ha producido un error al listar los amigos"})
@@ -73,11 +75,13 @@ module.exports = function(app, gestorBD) {
 
         }
 
-    }
+    }*/
 
-    app.get('/api/amigos/:id', function (req, res) {
+    app.get('/api/amigos/:email', function (req, res) {
         let criterio = {
-            "id" : req.params.id
+            //"_id": gestorBD.mongo.ObjectID(req.params.id)
+
+            email: req.params.email
         }
 
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
@@ -87,7 +91,7 @@ module.exports = function(app, gestorBD) {
             }
             else{
                 res.status(200);
-                res.send(JSON.stringify(amigos[0]));
+                res.json(JSON.stringify(usuarios[0]));
             }
 
         })

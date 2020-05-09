@@ -15,5 +15,14 @@ public class PO_ListUserBySearchText extends PO_NavView{
 		By boton = By.className("btn");
 		driver.findElement(boton).click();
 	}
+	
+	public static void fillSearchTextAmigos(WebDriver driver, String searchTextp) {
+		WebElement searchText = driver.findElement(By.name("busqueda"));
+		searchText.click();
+		searchText.clear();
+		searchText.sendKeys(searchTextp);
+		// Pulsar el boton de Alta.
+		
+	}
 
 }
