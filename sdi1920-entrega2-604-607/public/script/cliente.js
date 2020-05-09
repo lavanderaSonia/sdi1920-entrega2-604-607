@@ -11,6 +11,9 @@ if (Cookies.get('token') != null) {
     if (w == "amigos") {
         $("#contenedor-principal").load("widget-amigos.html");
     }
+    if (w == "mensajes") {
+        $("#contenedor-principal").load("widget-mensajes.html");
+    }
 }
 
 function widgetAmigos() {

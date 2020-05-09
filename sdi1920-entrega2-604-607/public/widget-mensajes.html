@@ -1,0 +1,28 @@
+<div id="widget-mensajes">
+	<span class="label label-primary" id="usuarioEnSesion">
+		Usuario en sesión:
+	</span>
+
+    <h2 id="nombreUsuario">
+        Chat con el usuario:
+    </h2>
+
+    <div id="mensajes" style="overflow-y: scroll;"></div>
+
+    </div>
+
+    <div class="row">
+        <div>
+            <div class="input-group">
+                <input type="text" class="form-control"
+                       placeholder="Inotroduce el mensaje" id="messageContent" />
+                <span class="input-group-btn">
+					<button id="buttonMessage" class="btn btn-default" onclick="enviarMensaje()">Enviar</button>
+				</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="script/widget-mensajes.js"></script>

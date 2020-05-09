@@ -50,7 +50,7 @@ function mostrarUsuarios(amigos){
     for(let i=0; i<amigos.length; i++){
         $("#tablaCuerpo").append(
             "<tr id=" + amigos[i]._id + ">" +
-            "<td>" +  amigos[i].nombre + "</td>" +
+            "<td><a onclick=chat('" + user.name + "')>" + userNameAndMessages + "</a>" + "</td>" +
             "<td>" +  amigos[i].apellidos + "</td>" +
             "<td>" +  amigos[i].email + "</td>" +
             "<td>" +
