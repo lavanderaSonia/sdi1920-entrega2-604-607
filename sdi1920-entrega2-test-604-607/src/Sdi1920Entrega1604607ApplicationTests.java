@@ -419,44 +419,53 @@ public class Sdi1920Entrega1604607ApplicationTests {
 		PO_NavView.checkElement(driver, "text", "Usuario no encontrado");
 	}
 
-	//[Prueba25] 
-	//Acceder a la lista de amigos de un usuario, que al menos tenga tres amigos.
+	// [Prueba25]
+	// Acceder a la lista de amigos de un usuario, que al menos tenga tres amigos.
 	@Test
 	public void prueba25() {
 		driver.navigate().to(URL + "/cliente.html");
-		
+
 		PO_LoginView.fillForm(driver, "sonia@email.com", "123456");
 
-		
-		//Comprobamos que son 3 en total 
-		//Thalía y yo + Ana 
-				Assert.assertEquals(3,
-						SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout()).size());
+		// Comprobamos que son 3 en total
+		// Thalía y yo + Ana
+		Assert.assertEquals(3,
+				SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout()).size());
 
-				// Comprobamos que son los usuarios esperados
-				PO_View.checkElement(driver, "text", "edward@email.com");
-				PO_View.checkElement(driver, "text", "rut@email.com");
-				PO_View.checkElement(driver, "text", "ana@email.com");
-		
+		// Comprobamos que son los usuarios esperados
+		PO_View.checkElement(driver, "text", "edward@email.com");
+		PO_View.checkElement(driver, "text", "rut@email.com");
+		PO_View.checkElement(driver, "text", "ana@email.com");
+
 	}
 
-	// [Prueba26] Mostrar el listado de publicaciones de un usuario y comprobar que
-	// se muestran todas las que existen para dicho usuario.
+	// [Prueba26] Acceder a la lista de amigos de un usuario, y
+	// realizar un filtrado para encontrar a un amigo concreto,
+	// el nombre a buscar debe coincidir con el de un amigo.
 
 	@Test
 	public void prueba26() {
-		PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "sonia@email.com", "pass");
+		driver.navigate().to(URL + "/cliente.html");
 
-		// Navegamos hasta la opción de listar publicaciones de un usuario en sesión
-		PO_HomeView.checkElement(driver, "id", "publications-menu").get(0).click();
-		PO_HomeView.checkElement(driver, "@href", "/publication/list").get(0).click();
+		PO_LoginView.fillForm(driver, "sonia@email.com", "123456");
 
-		Assert.assertEquals(2,
+		Assert.assertEquals(3,
 				SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout()).size());
 
-		PO_View.checkElement(driver, "text", "Creación de la aplicación");
-		PO_View.checkElement(driver, "text", "Seguimos creando");
+		
+		PO_ListUserBySearchText.fillSearchTextAmigos(driver, "rut");
+		
+		Assert.assertEquals(1,
+				SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout()).size());
+
+
+		// Comprobamos que son los usuarios esperados o sea no coincide con ninguno de
+		// los del sistema
+		PO_View.checkElement(driver, "text", "rut@email.com");
+		SeleniumUtils.EsperaCargaPaginaNoTexto(driver, "edward@email.com", PO_View.getTimeout());
+		SeleniumUtils.EsperaCargaPaginaNoTexto(driver, "ana@email.com", PO_View.getTimeout());
+
+		
 	}
 
 	// [Prueba27] Mostrar el listado de publicaciones de un usuario amigo y
