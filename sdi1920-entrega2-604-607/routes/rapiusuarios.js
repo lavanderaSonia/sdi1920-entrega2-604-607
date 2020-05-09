@@ -27,13 +27,9 @@ module.exports = function(app, gestorBD) {
             });
     });
 
-}
-module.exports = function (app, gestorBD) {
-
     app.get('/api/amigos', function (req, res) {
-       // let token = req.body.token || req.query.token || req.headers['token'];
 
-        let criterio = {email: res.usuario}
+        let criterio = {email: res.usuario};
 
         //Obtenemos los emails de los amigos del usuario en sesión
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
@@ -42,12 +38,64 @@ module.exports = function (app, gestorBD) {
                 res.json({error: "se ha producido un error al listar los usuarios"})
             }
             else{
+                //Ahora necesito obtener los ids de los amigos a partir de los emails
+             //   obtenerIdsAmigos(req, res, usuarios[0].amigos);
                 res.status(200);
-                res.json(JSON.stringify(usuarios));
+                res.json(JSON.stringify(usuarios[0].amigos));
             }
         })
     })
 
+  /**  function obtenerIdsAmigos(req, res, amigos) {
+        if(amigos==null){
+            res.status(500);
+            res.json({error: "se ha producido un error al listar los amigos"})
+        }
+        else{
+            let criterio = {
+                email: {
+                    $in: amigos
+                }
+            }
+            gestorBD.obtenerUsuarios(criterio, function (usuarios) {
+                if(usuarios==null){
+                    res.status(500);
+                    res.json({error: "se ha producido un error al listar los usuarios"})
+                }
+                else{
+                    let idsAmigos=[];
+                    //Voy a añadir a mi array de ids de amigos cada uno de los ids de esos amigos
+                    for(let amigo in usuarios){
+                        idsAmigos.push(usuarios[amigo]._id);
+                    }
+                    res.status(200);
+                    res.json(JSON.stringify(idsAmigos));
+                }
+            })
 
+        }
+
+    }*/
+
+    app.get('/api/amigos/:email', function (req, res) {
+        let criterio = {
+            //"_id": gestorBD.mongo.ObjectID(req.params.id)
+
+            email: req.params.email
+        }
+
+        gestorBD.obtenerUsuarios(criterio, function (usuarios) {
+            if(usuarios==null){
+                res.status(500);
+                res.json({error: "Error al listar los usuarios"})
+            }
+            else{
+                res.status(200);
+                res.json(JSON.stringify(usuarios[0]));
+            }
+
+        })
+
+    })
 
 }
