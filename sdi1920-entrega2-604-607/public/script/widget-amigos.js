@@ -9,7 +9,7 @@ function cargarAmigos() {
         dataType: 'json',
         headers: {"token": token},
         success: function (respuesta) {
-            let emailsRecibidos = respuesta;
+            let emailsRecibidos = JSON.parse(respuesta);
             cargarDatosAmigos(emailsRecibidos);
         },
         error: function (error) {
@@ -22,9 +22,9 @@ function cargarDatosAmigos(emailAmigos) {
     $("#tablaCuerpo").empty(); // Vaciar la tabla
     for (let i = 0; i < emailAmigos.length; i++) {
        //Necesitamos conseguir los datos de todos los amigos
+        console.log("CargarDatosAmigos" + emailAmigos[i]);
         obtenerDatosAmigos(emailAmigos[i]);
     }
-   mostrarUsuarios(amigos);
 }
 
 function obtenerDatosAmigos(idAmigo){
@@ -35,9 +35,7 @@ function obtenerDatosAmigos(idAmigo){
         dataType: 'json',
         headers: {"token": token},
         success: function (respuesta) {
-            amigos.push(respuesta);
-            console.log("respuesta" +respuesta)
-            //mostrarUsuarios(respuesta);
+            mostrarUsuarios(JSON.parse(respuesta));
         },
         error: function (error) {
             $("#contenedor-principal").load("widget-login.html");
@@ -46,24 +44,23 @@ function obtenerDatosAmigos(idAmigo){
 
 }
 
-function mostrarUsuarios(amigos){
-    for(let i=0; i<amigos.length; i++) {
-        console.log(amigos[i])
+cargarAmigos();
+
+function mostrarUsuarios(amigo){
         $("#tablaCuerpo").append(
-            "<tr id=" + amigos[i]._id + ">" +
-            "<td>" + amigos[i].nombre + "</td>" +
-            "<td>" + amigos[i].apellidos + "</td>" +
-            "<td>" + amigos[i].email + "</td>" +
+            "<tr id=" + amigo._id + ">" +
+            "<td>" + amigo.nombre + "</td>" +
+            "<td>" + amigo.apellidos + "</td>" +
+            "<td>" + amigo.email + "</td>" +
             "<td>" +
             "</tr>");
-    }
 
 
 }
 
 
 
-cargarAmigos();
+
 
 
 

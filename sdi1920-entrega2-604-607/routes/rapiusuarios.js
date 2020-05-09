@@ -78,9 +78,9 @@ module.exports = function(app, gestorBD) {
     }*/
 
     app.get('/api/amigos/:email', function (req, res) {
-        console.log(req.params.email)
         let criterio = {
             //"_id": gestorBD.mongo.ObjectID(req.params.id)
+
             email: req.params.email
         }
 
@@ -91,9 +91,8 @@ module.exports = function(app, gestorBD) {
             }
             else{
                 res.status(200);
-                res.send(JSON.stringify(usuarios[0]));
-                console.log(usuarios[0])
-                //console.log(usuarios[0])
+                res.json(JSON.stringify(usuarios[0]));
+                //console.log("Api" + JSON.stringify(usuarios[0]))
             }
 
         })
