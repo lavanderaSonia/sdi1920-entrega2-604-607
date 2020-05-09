@@ -1,6 +1,6 @@
 window.history.pushState("", "", "/cliente.html?w=amigos");
-let amigos;
-let usuarios;
+let usuarios=[];
+let amigos = [];
 function cargarAmigos() {
     $.ajax({
         url: URLbase + "/amigos",
@@ -9,8 +9,8 @@ function cargarAmigos() {
         dataType: 'json',
         headers: {"token": token},
         success: function (respuesta) {
-            amigos = respuesta;
-            cargarDatosAmigos(amigos);
+            let emailsRecibidos = respuesta;
+            cargarDatosAmigos(emailsRecibidos);
         },
         error: function (error) {
             $("#contenedor-principal").load("widget-login.html");
@@ -18,13 +18,13 @@ function cargarAmigos() {
     });
 }
 
-function cargarDatosAmigos(amigos) {
+function cargarDatosAmigos(emailAmigos) {
     $("#tablaCuerpo").empty(); // Vaciar la tabla
-    for (let i = 0; i < amigos.length; i++) {
+    for (let i = 0; i < emailAmigos.length; i++) {
        //Necesitamos conseguir los datos de todos los amigos
-        obtenerDatosAmigos(amigos[i]);
+        obtenerDatosAmigos(emailAmigos[i]);
     }
-    mostrarUsuarios(amigos);
+   mostrarUsuarios(amigos);
 }
 
 function obtenerDatosAmigos(idAmigo){
@@ -36,8 +36,8 @@ function obtenerDatosAmigos(idAmigo){
         headers: {"token": token},
         success: function (respuesta) {
             amigos.push(respuesta);
-            usuarios.push(respuesta);
-            //mostrarUsuarios(usuarios);
+            console.log("respuesta" +respuesta)
+            //mostrarUsuarios(respuesta);
         },
         error: function (error) {
             $("#contenedor-principal").load("widget-login.html");
@@ -47,12 +47,13 @@ function obtenerDatosAmigos(idAmigo){
 }
 
 function mostrarUsuarios(amigos){
-    for(let i=0; i<amigos.length; i++){
+    for(let i=0; i<amigos.length; i++) {
+        console.log(amigos[i])
         $("#tablaCuerpo").append(
             "<tr id=" + amigos[i]._id + ">" +
-            "<td>" +  amigos[i].nombre + "</td>" +
-            "<td>" +  amigos[i].apellidos + "</td>" +
-            "<td>" +  amigos[i].email + "</td>" +
+            "<td>" + amigos[i].nombre + "</td>" +
+            "<td>" + amigos[i].apellidos + "</td>" +
+            "<td>" + amigos[i].email + "</td>" +
             "<td>" +
             "</tr>");
     }
