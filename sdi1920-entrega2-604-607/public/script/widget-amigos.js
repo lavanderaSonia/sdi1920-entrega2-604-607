@@ -53,7 +53,7 @@ function obtenerDatosAmigos(idAmigo){
         dataType: 'json',
         headers: {"token": token},
         success: function (respuesta) {
-            mostrarUsuarios(JSON.parse(respuesta));
+            obtenerNoLeidos(JSON.parse(respuesta));
             amigos.push(JSON.parse(respuesta))
         },
         error: function (error) {

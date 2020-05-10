@@ -22,7 +22,8 @@ module.exports = function(app, gestorBD) {
                         } else {
                             res.status(200);
                             res.json({
-                                enviado : true
+                                enviado : true,
+                                emisor : res.usuario
                             });
                         }
                     });
@@ -119,7 +120,7 @@ module.exports = function(app, gestorBD) {
                 res.status(200);
                 res.json(JSON.stringify(result));
             }
-            });
+        });
     });
 
 }

@@ -1,11 +1,9 @@
 $("document").ready(function() {
-    $("#boton-enviar").click(enviarMensaje);
+    $("#buttonMessage").click(enviarMensaje);
 });
 
 window.history.pushState("", "", "/cliente.html?w=mensajes");
 var mensajes;
-
-
 
 //cargarMensajes();
 
@@ -19,7 +17,6 @@ function cargarMensajes() {
         success: function (respuesta) {
             mensajes = respuesta;
             mostrarMensajes(mensajes)
-
         },
         error: function (error) {
             $("#contenedor-principal").load("widget-login.html");
@@ -42,7 +39,6 @@ function leerMensajes() {
         }
     });
 }
-
 
 function mostrarMensajes(mensajes){
     $("#mensajes").empty(); // Vaciar la tabla
@@ -68,16 +64,9 @@ function mostrarMensajes(mensajes){
 
         $("#mensajes").append(conversacion);
     }
-
 }
 
-
-
-
 cargarNombreAmigo();
-
-
-
 
 function cargarNombreAmigo(){
     $('#nombreUsuario').text("Chat con el usuario: " + amigoSeleccionado);
@@ -88,16 +77,12 @@ idActualizarMensajes = setInterval(function () {
     cargarMensajes();
 }, 1000);
 
-
-
-
-
 /**
  * Envia un mensaje al chat
  */
 function enviarMensaje() {
     // Comprobamos que el mensaje no está vacío
-    if($("#mensaje").val().length == 0 || !$("#mensaje").val()) {
+    if($("#messageContent").val().length == 0 || !$("#messageContent").val()) {
         return;
     }
     $.ajax({
@@ -105,17 +90,25 @@ function enviarMensaje() {
         type: "POST",
         data: {
             receptor: amigoSeleccionado,
-            texto: $("#mensaje").val()
+            texto: $("#messageContent").val()
         },
         headers: { "token": token },
         dataType: 'json',
         success: function (respuesta) {
-            $("#mensajes").append("<div>" + $("#mensaje").val() + "</div>");
-            $("#mensaje").val("");
+            $("#mensajes").append("<li class='self'>" +
+                "<div class='msg'>" +
+                "<p>" + JSON.parse(respuesta).emisor + "</p>" +
+                "<p>" + $("#messageContent").val() + "</p>" + "</div>");
+            $("#messageContent").val("");
         },
         error: function(error) {
             $("#alerta")
                 .html("<div class='alert alert-danger'>Se ha producido un error al enviar el mensaje</div>");
         }
     });
+}
+
+function updateScroll() {
+    var element = document.getElementById("mensajes");
+    element.scrollTop = element.scrollHeight;
 }

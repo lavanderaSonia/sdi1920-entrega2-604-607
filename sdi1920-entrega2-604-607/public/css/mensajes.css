@@ -49,3 +49,9 @@ html, body {
     margin: 0 0 0.2rem 0;
     color: #777;
 }
+
+.scroll {
+    overflow-y: auto;
+    height: 55%;
+    width: 100%;
+}

@@ -9,19 +9,19 @@
         Chat con el usuario:
     </h2>
 
-    <ol id="mensajes"></ol>
+    <ol id="mensajes" class="scroll"></ol>
 
 </div>
 
     <div class="row">
         <div>
             <div class="input-group">
-            <input type="text" class="form-control" name="mensaje"
-                   placeholder="Escribe aquí tu mensaje" id="mensaje" />
-            <div class="col-sm-offset-2 col-sm-10">
-                <button type="button" class="btn" id="boton-enviar">Enviar</button>
+                <input type="text" class="form-control"
+                       placeholder="Introduce el mensaje" id="messageContent" />
+                <span class="input-group-btn">
+                        <button id="buttonMessage" class="btn btn-default">Enviar</button>
+                    </span>
             </div>
-        </div>
         </div>
     </div>
 
