@@ -249,6 +249,29 @@ module.exports = {
                 });
             }
         });
+    },
+    /**
+     * Actualiza todos los mensajes que cumplan el criterio especificiado
+     * @param criterio, criterio a seguir
+     * @param cambio, cambio que se realiza
+     * @param funcionCallback
+     */
+    modificarMensaje : function(criterio, cambio, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('mensajes');
+                collection.update(criterio, { $set: cambio }, {multi : true, upsert: true}, function(err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
     }
 
 };

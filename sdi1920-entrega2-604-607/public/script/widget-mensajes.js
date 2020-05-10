@@ -29,6 +29,21 @@ function cargarMensajes() {
     });
 }
 
+function leerMensajes() {
+    $.ajax({
+        url: URLbase + "/mensajes/marcarLeidos",
+        type: "POST",
+        data: {"amigo" : amigoSeleccionado},
+        dataType: 'json',
+        headers: {"token": token},
+        success: function (respuesta) {
+            console.log(JSON.parse(respuesta));
+        },
+        error: function (error) {
+            $("#contenedor-principal").load("widget-login.html");
+        }
+    });
+}
 
 
 function mostrarMensajes(mensajes){
@@ -42,11 +57,12 @@ function mostrarMensajes(mensajes){
                 "<p class='text-left'>" + mensaje.texto + "</p>"
             ;
             conversacion += "</div>";
-        }else{
+        } else {
             usuario = mensaje.receptor;
             conversacion += "<div class='message-container-right'>" +
                 "<p class='text-right'>" + mensaje.receptor + "</p>" +
-                "<p class='text-right'>" + mensaje.texto + "</p>"
+                "<p class='text-right'>" + mensaje.texto + "</p>" +
+                "<span id='" + mensaje._id.toString() + "'>" + mensaje.leido ? "leido" : "no leido" + "</span>"
             ;
             conversacion += "</div>";
         }

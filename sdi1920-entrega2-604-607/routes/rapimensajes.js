@@ -110,6 +110,19 @@ module.exports = function(app, gestorBD) {
 
 
 
-    })
+    });
+
+    app.post('/api/mensajes/marcarLeidos', function (req, res) {
+        gestorBD.modificarMensaje( {"emisor" : req.body.amigo, "receptor": res.usuario, "leido": false}, {"leido" : true}
+        , function(result){
+            if(result == null){
+                res.status(500);
+                res.json({error: "Error al marcar como leídos los mensajes", result : result});
+            } else {
+                res.status(200);
+                res.json(JSON.stringify(result));
+            }
+            });
+    });
 
 }
