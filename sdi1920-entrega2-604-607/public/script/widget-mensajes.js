@@ -1,12 +1,7 @@
-$("document").ready(function() {
-    $("#buttonMessage").click(enviarMensaje);
-});
-
 window.history.pushState("", "", "/cliente.html?w=mensajes");
 var mensajes;
 var mensajesNoLeidos;
-
-
+var actualizado = true;
 
 cargarMensajes();
 
@@ -22,7 +17,6 @@ function cargarMensajes() {
             mensajes = respuesta;
             $("#mensajes").empty(); // Vaciar la tabla
             mostrarMensajes(mensajes)
-
         },
         error: function (error) {
             $("#contenedor-principal").load("widget-login.html");
@@ -31,6 +25,11 @@ function cargarMensajes() {
 }
 
 function actualizarMensajes() {
+    // Comprobamos que han terminado de actualizarse los mensajes leidos
+    // Si no podria darse el caso de que se muestren varias veces los mismos
+    if(!actualizado)
+        return;
+    actualizado = false;
     console.log("Se muestra cada poco")
     $.ajax({
         url: URLbase + "/mensajes/noLeidos/" + amigoSeleccionado,
@@ -39,9 +38,9 @@ function actualizarMensajes() {
         dataType: 'json',
         headers: {"token": token},
         success: function (respuesta) {
-            mensajesNoLeidos = respuesta;
-            mostrarMensajes(mensajesNoLeidos)
-
+            mensajesNoLeidos = JSON.parse(respuesta);
+            mostrarMensajes(mensajesNoLeidos);
+            leerMensajes();
         },
         error: function (error) {
             $("#contenedor-principal").load("widget-login.html");
@@ -57,7 +56,7 @@ function leerMensajes() {
         dataType: 'json',
         headers: {"token": token},
         success: function (respuesta) {
-
+            actualizado = true;
         },
         error: function (error) {
             $("#alerta").html("<span class='alert-danger'>Se ha producido un error</span>");
@@ -66,7 +65,7 @@ function leerMensajes() {
 }
 
 function mostrarMensajes(mensajes){
-    $("#mensajes").empty(); // Vaciar la tabla
+    //$("#mensajes").empty(); // Vaciar la tabla
     for(let i=0; i<mensajes.length; i++){
         let mensaje = mensajes[i];
         let conversacion = "";
@@ -123,11 +122,13 @@ function enviarMensaje() {
         headers: { "token": token },
         dataType: 'json',
         success: function (respuesta) {
-            $("#mensajes").append("<li class='self'>" +
-                "<div class='msg'>" +
-                "<p>" + JSON.parse(respuesta).emisor + "</p>" +
-                "<p>" + $("#messageContent").val() + "</p>" + "</div>");
+            var mensaje = [ {
+                emisor : JSON.parse(respuesta).emisor,
+                texto: $("#messageContent").val()
+            }];
+            mostrarMensajes(mensaje);
             $("#messageContent").val("");
+            updateScroll();
         },
         error: function(error) {
             $("#alerta")

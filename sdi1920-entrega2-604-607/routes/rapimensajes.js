@@ -11,7 +11,6 @@ module.exports = function(app, gestorBD) {
                     enviado : false
                 });
             } else {
-                console.log(usuarios[0].amigos);
                 // Comprobamos que son amigos
                 if(usuarios[0].amigos.includes(req.body.receptor)){
                     enviarMensaje(res.usuario, req.body.receptor, req.body.texto, function(result) {
@@ -22,10 +21,10 @@ module.exports = function(app, gestorBD) {
                             });
                         } else {
                             res.status(200);
-                            res.json({
+                            res.json(JSON.stringify({
                                 enviado : true,
                                 emisor : res.usuario
-                            });
+                            }));
                         }
                     });
                 } else {
@@ -60,7 +59,7 @@ module.exports = function(app, gestorBD) {
     }
 
     app.get("/api/mensajes/noLeidos/:amigo", function(req, res) {
-        console.log("Mensajes no leídos de " + req.params.amigo + " a " + res.usuario);
+        //console.log("Mensajes no leídos de " + req.params.amigo + " a " + res.usuario);
         gestorBD.obtenerMensajes({ "emisor" : req.params.amigo, "receptor": res.usuario, "leido": false}, function(result) {
             if(result == null) {
                 res.status(500);
@@ -105,41 +104,41 @@ module.exports = function(app, gestorBD) {
         })
     })
 
-        app.get('/api/mensajes/noLeidos/:email', function (req, res) {
-            let emailEmisor = {email: res.usuario};
+    app.get('/api/mensajes/noLeidos/:email', function (req, res) {
+        let emailEmisor = {email: res.usuario};
 
 
-            gestorBD.obtenerUsuarios(emailEmisor, function (usuarios) {
-                if(usuarios==null || usuarios.length==0){
-                    res.status(500);
-                    res.json({error: "Error al buscar los usuarios"})
-                }
-                else{
-                    let criterio = {
-                        $or: [
-                            {"emisor" : res.usuario, "receptor" : req.params.email, leido:false},
-                            {"emisor" : req.params.email, "receptor" : res.usuario, leido: false}
+        gestorBD.obtenerUsuarios(emailEmisor, function (usuarios) {
+            if(usuarios==null || usuarios.length==0){
+                res.status(500);
+                res.json({error: "Error al buscar los usuarios"})
+            }
+            else{
+                let criterio = {
+                    $or: [
+                        {"emisor" : res.usuario, "receptor" : req.params.email, leido:false},
+                        {"emisor" : req.params.email, "receptor" : res.usuario, leido: false}
 
-                        ]
-                    };
+                    ]
+                };
 
-                    gestorBD.obtenerMensajes(criterio, function (mensajes) {
-                        if(mensajes==null || mensajes.length==0){
-                            res.status(500);
-                            res.json({error: "Error al obtener los mensajes"})
-                        }
-                        else{
-                            res.status(200);
-                            res.send(JSON.stringify(mensajes));
-                        }
+                gestorBD.obtenerMensajes(criterio, function (mensajes) {
+                    if(mensajes==null || mensajes.length==0){
+                        res.status(500);
+                        res.json({error: "Error al obtener los mensajes"})
+                    }
+                    else{
+                        res.status(200);
+                        res.send(JSON.stringify(mensajes));
+                    }
 
-                    })
+                })
 
-                }
+            }
 
 
-        })
-    });
+    })
+});
 
     app.post('/api/mensajes/marcarLeidos', function (req, res) {
         // Marcamos todos los mensajes recibidos del amigo seleccionado como leídos
