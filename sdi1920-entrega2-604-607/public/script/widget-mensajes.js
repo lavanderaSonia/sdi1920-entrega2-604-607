@@ -1,11 +1,9 @@
 window.history.pushState("", "", "/cliente.html?w=mensajes");
 var mensajes;
-var usuario;
-
-//cargarNombreUsuario();
-//cargarNombreAmigo();
 
 
+
+cargarMensajes();
 
 function cargarMensajes() {
     $.ajax({
@@ -34,18 +32,20 @@ function mostrarMensajes(mensajes){
         let mensaje = mensajes[i];
         let conversacion = "";
         if(mensaje.emisor == amigoSeleccionado){
-            conversacion += "<div class='message-container-left'>" +
-                "<p class='text-left'>" + mensaje.emisor + "</p>" +
-                "<p class='text-left'>" + mensaje.texto + "</p>"
+            conversacion += "<li class='other'>" +
+                "<div class='msg'>" +
+                "<p>" + mensaje.emisor + "</p>" +
+                "<p>" + mensaje.texto + "</p>"
+            + "</div>"
             ;
-            conversacion += "</div>";
+            conversacion += "</li>";
         }else{
-            usuario = mensaje.receptor;
-            conversacion += "<div class='message-container-right'>" +
-                "<p class='text-right'>" + mensaje.receptor + "</p>" +
-                "<p class='text-right'>" + mensaje.texto + "</p>"
+            conversacion += "<li class='self'>" +
+                "<div class='msg'>" +
+                "<p>" + mensaje.emisor + "</p>" +
+                "<p>" + mensaje.texto + "</p>" + "</div>"
             ;
-            conversacion += "</div>";
+            conversacion += "</li>";
         }
 
         $("#mensajes").append(conversacion);
@@ -53,19 +53,26 @@ function mostrarMensajes(mensajes){
 
 }
 
-cargarMensajes();
+
+
+
+cargarNombreAmigo();
+
+
 
 
 function cargarNombreAmigo(){
     $('#nombreUsuario').text("Chat con el usuario: " + amigoSeleccionado);
 }
 
-function cargarNombreUsuario(){
-    $('#usuarioEnSesion').text("Usuario en sesión: " + usuario);
-
-}
-
-/**setInterval(function(){
+var counter = 0;
+var i = setInterval(function(){
+    // do your thing
     cargarMensajes();
-}, 1000);
-*/
+    counter++;
+    if(counter === 10) {
+        clearInterval(i);
+    }
+}, 200);
+
+
