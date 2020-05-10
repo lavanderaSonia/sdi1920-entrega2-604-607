@@ -11,6 +11,7 @@ module.exports = function(app, gestorBD) {
                     enviado : false
                 });
             } else {
+                console.log(usuarios[0].amigos);
                 // Comprobamos que son amigos
                 if(usuarios[0].amigos.includes(req.body.receptor)){
                     enviarMensaje(res.usuario, req.body.receptor, req.body.texto, function(result) {
@@ -71,20 +72,54 @@ module.exports = function(app, gestorBD) {
         });
     });
 
-    app.get('/api/mensajes/:id', function (req, res) {
-
+    app.get('/api/mensajes/:email', function (req, res) {
         let emailEmisor = {email: res.usuario};
 
+
         gestorBD.obtenerUsuarios(emailEmisor, function (usuarios) {
-            if(usuarios==null || usuarios.length==0){
+            if (usuarios == null || usuarios.length == 0) {
                 res.status(500);
                 res.json({error: "Error al buscar los usuarios"})
+            } else {
+                let criterio = {
+                    $or: [
+                        {"emisor": res.usuario, "receptor": req.params.email},
+                        {"emisor": req.params.email, "receptor": res.usuario}
+                    ]
+                };
+
+                gestorBD.obtenerMensajes(criterio, function (mensajes) {
+                    if (mensajes == null || mensajes.length == 0) {
+                        res.status(500);
+                        res.json({error: "Error al obtener los mensajes"})
+                    } else {
+                        res.status(200);
+                        res.send(JSON.stringify(mensajes))
+                    }
+
+                })
+
             }
-            else{
+
+
+        })
+    })
+
+        app.get('/api/mensajes/noLeidos/:email', function (req, res) {
+            let emailEmisor = {email: res.usuario};
+
+
+            gestorBD.obtenerUsuarios(emailEmisor, function (usuarios) {
+                if(usuarios==null || usuarios.length==0){
+                    res.status(500);
+                    res.json({error: "Error al buscar los usuarios"})
+                }
+                else{
                     let criterio = {
                         $or: [
-                            {"emisor" : res.usuario, "receptor" : req.params.id},
-                            {"emisor" : req.params.id, "receptor" : res.usuario}
+                            {"emisor" : res.usuario, "receptor" : req.params.email, leido:false},
+                            {"emisor" : req.params.email, "receptor" : res.usuario, leido: false}
+
                         ]
                     };
 
@@ -100,7 +135,7 @@ module.exports = function(app, gestorBD) {
 
                     })
 
-            }
+                }
 
 
         })

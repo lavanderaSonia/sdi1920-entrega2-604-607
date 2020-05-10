@@ -7,7 +7,7 @@ if (Cookies.get('token') != null) {
     var w = url.searchParams.get("w");
     if (w == "login") {
         clearInterval(idActualizarNoLeidos);
-        clearInterval(idActualizarMensajes);
+        clearInterval(idActualizarMensajes)
         $("#contenedor-principal").load("widget-login.html");
     }
     if (w == "amigos") {
