@@ -167,6 +167,29 @@ module.exports = {
         });
     },
     /**
+     * Añade un usuario a la lista de amigos
+     * @param criterio
+     * @param amigo
+     * @param funcionCallback
+     */
+    añadirAAmigos(criterio, amigo, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('usuarios');
+                collection.update(criterio, {$push: { "amigos" : amigo }}, function(err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+    /**
      * Elimina la invitación indicada por el criterio
      * @param criterio, criterio a seguir
      * @param funcionCallback
@@ -210,7 +233,7 @@ module.exports = {
             }
         });
     },
-    obtenerMensajes(criterio, functionCallback){
+    obtenerMensajes(criterio, funcionCallback){
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);

@@ -11,7 +11,6 @@ module.exports = function(app, gestorBD) {
                     enviado : false
                 });
             } else {
-                console.log(usuarios[0].amigos);
                 // Comprobamos que son amigos
                 if(usuarios[0].amigos.includes(req.body.receptor)){
                     enviarMensaje(res.usuario, req.body.receptor, req.body.texto, function(result) {
@@ -58,10 +57,17 @@ module.exports = function(app, gestorBD) {
         );
     }
 
-
-
-
-
+    app.get("/api/mensajes/noLeidos/:amigo", function(req, res) {
+        gestorBD.obtenerMensajes({ "emisor" : req.params.amigo, "receptor": res.usuario, "leido": false}, function(result) {
+            if(result == null) {
+                res.status(500);
+                res.json({error: "Error al buscar los mensajes"});
+            } else {
+                res.status(200);
+                res.json(JSON.stringify(result));
+            }
+        });
+    });
 
     app.get('/api/mensajes/:id', function (req, res) {
         let emailEmisor = {

@@ -1,4 +1,6 @@
 var token;
+var mensajes;
+var amigoSeleccionado;
 var URLbase = "https://localhost:8081/api";
 $("#contenedor-principal").load("widget-login.html");
 if (Cookies.get('token') != null) {

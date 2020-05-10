@@ -46,7 +46,7 @@ function obtenerDatosAmigos(idAmigo){
         dataType: 'json',
         headers: {"token": token},
         success: function (respuesta) {
-            mostrarUsuarios(JSON.parse(respuesta));
+            obtenerNoLeidos(JSON.parse(respuesta), idAmigo);
             amigos.push(JSON.parse(respuesta))
         },
         error: function (error) {
@@ -62,19 +62,35 @@ cargarAmigos();
  * Función que permite mostrar los amigos en la tabla
  * @param amigo amigo que se quiere mostrar
  */
-function mostrarUsuarios(amigo){
+function mostrarUsuarios(amigo, numNoLeidos){
     $("#tablaCuerpo").append(
             "<tr id=" + amigo._id + ">" +
             "<td>" + amigo.nombre + "</td>" +
-            "<td>" + "<a onclick= mensajes('" + amigo.email + "')> amigo.email </a>" +
-            "<td>" +
-            "</tr>");
+            "<td><a onclick= mensajes('" + amigo.email + "')><span>" + amigo.email + "</span>" +
+            (numNoLeidos == 0 ? "" : "<span class='badge'>" + numNoLeidos + "</span>") + "</a>" +
+            "</div><td></tr>");
 
 
 }
 
+function obtenerNoLeidos(amigo) {
+    $.ajax({
+        url: URLbase + "/mensajes/noLeidos/" + amigo.email,
+        type: "GET",
+        data: { },
+        dataType: 'json',
+        headers: {"token": token},
+        success: function (respuesta) {
+            mostrarUsuarios(amigo, JSON.parse(respuesta).length);
+        },
+        error: function (error) {
+            $("#contenedor-principal").load("widget-login.html");
+        }
+    });
+}
+
 function mensajes(email){
-    let amigoSeleccionado = email;
+    amigoSeleccionado = email;
     $("#contenedor-principal").load("widget-mensajes.html");
 }
 

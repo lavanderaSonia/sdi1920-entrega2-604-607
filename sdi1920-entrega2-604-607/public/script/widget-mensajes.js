@@ -1,9 +1,9 @@
 $("document").ready(function() {
-    $("#boton-enviar").onclick(enviarMensaje());
+    $("#boton-enviar").click(enviarMensaje);
 });
 
 window.history.pushState("", "", "/cliente.html?w=mensajes");
-let mensajes;
+mensajes;
 
 cargarNombreUsuario();
 cargarNombreAmigo();
@@ -37,7 +37,14 @@ setInterval(function(){
     cargarMensajes();
 }, 1000);
 
+/**
+ * Envia un mensaje al chat
+ */
 function enviarMensaje() {
+    // Comprobamos que el mensaje no está vacío
+    if($("#mensaje").val().length == 0 || !$("#mensaje").val()) {
+        return;
+    }
     $.ajax({
         url: URLbase + "/mensaje",
         type: "POST",
@@ -45,9 +52,11 @@ function enviarMensaje() {
             receptor: amigoSeleccionado,
             texto: $("#mensaje").val()
         },
+        headers: { "token": token },
         dataType: 'json',
         success: function (respuesta) {
             $("#mensajes").append("<div>" + $("#mensaje").val() + "</div>");
+            $("#mensaje").val("");
         },
         error: function(error) {
             $("#alerta")
