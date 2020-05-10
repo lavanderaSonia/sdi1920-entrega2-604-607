@@ -53,7 +53,7 @@ function obtenerDatosAmigos(idAmigo){
         dataType: 'json',
         headers: {"token": token},
         success: function (respuesta) {
-            obtenerNoLeidos(JSON.parse(respuesta), idAmigo);
+            mostrarUsuarios(JSON.parse(respuesta));
             amigos.push(JSON.parse(respuesta))
         },
         error: function (error) {
@@ -73,7 +73,7 @@ function mostrarUsuarios(amigo, numNoLeidos) {
     $("#tablaCuerpo").append(
         "<tr id=" + amigo._id + ">" +
         "<td>" + amigo.nombre + "</td>" +
-        "<td><a onclick= mensajes('" + amigo.email + "') id='chat" + amigo.email + "'><span class='amigo'>" + amigo.email + "</span>" +
+        "<td><a onclick= abrirChat('" + amigo.email + "') id='chat" + amigo.email + "'><span class='amigo'>" + amigo.email + "</span>" +
         "<span class='badge' name='numNoLeidos" + amigo.email + "'>" + (numNoLeidos == 0 ? "" : numNoLeidos) + "</span>" + "</a>" +
         "</div><td></tr>");
 }
@@ -116,7 +116,7 @@ function obtenerNoLeidos(amigo) {
     });
 }
 
-function mensajes(email){
+function abrirChat(email){
     amigoSeleccionado = email;
     $("#contenedor-principal").load("widget-mensajes.html");
 }

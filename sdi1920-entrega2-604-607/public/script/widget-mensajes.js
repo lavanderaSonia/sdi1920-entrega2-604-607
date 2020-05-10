@@ -4,12 +4,10 @@ $("document").ready(function() {
 
 window.history.pushState("", "", "/cliente.html?w=mensajes");
 var mensajes;
-var usuario;
-
-//cargarNombreUsuario();
-//cargarNombreAmigo();
 
 
+
+//cargarMensajes();
 
 function cargarMensajes() {
     $.ajax({
@@ -52,19 +50,20 @@ function mostrarMensajes(mensajes){
         let mensaje = mensajes[i];
         let conversacion = "";
         if(mensaje.emisor == amigoSeleccionado){
-            conversacion += "<div class='message-container-left'>" +
-                "<p class='text-left'>" + mensaje.emisor + "</p>" +
-                "<p class='text-left'>" + mensaje.texto + "</p>"
+            conversacion += "<li class='other'>" +
+                "<div class='msg'>" +
+                "<p>" + mensaje.emisor + "</p>" +
+                "<p>" + mensaje.texto + "</p>"
+            + "</div>"
             ;
-            conversacion += "</div>";
-        } else {
-            usuario = mensaje.receptor;
-            conversacion += "<div class='message-container-right'>" +
-                "<p class='text-right'>" + mensaje.receptor + "</p>" +
-                "<p class='text-right'>" + mensaje.texto + "</p>" +
-                "<span id='" + mensaje._id.toString() + "'>" + mensaje.leido ? "leido" : "no leido" + "</span>"
+            conversacion += "</li>";
+        }else{
+            conversacion += "<li class='self'>" +
+                "<div class='msg'>" +
+                "<p>" + mensaje.emisor + "</p>" +
+                "<p>" + mensaje.texto + "</p>" + "</div>"
             ;
-            conversacion += "</div>";
+            conversacion += "</li>";
         }
 
         $("#mensajes").append(conversacion);
@@ -72,21 +71,25 @@ function mostrarMensajes(mensajes){
 
 }
 
-cargarMensajes();
+
+
+
+cargarNombreAmigo();
+
+
 
 
 function cargarNombreAmigo(){
     $('#nombreUsuario').text("Chat con el usuario: " + amigoSeleccionado);
 }
 
-function cargarNombreUsuario(){
-    $('#usuarioEnSesion').text("Usuario en sesión: " + usuario);
-
-}
-
-setInterval(function(){
+var idActualizarMensajes;
+idActualizarMensajes = setInterval(function () {
     cargarMensajes();
 }, 1000);
+
+
+
 
 
 /**

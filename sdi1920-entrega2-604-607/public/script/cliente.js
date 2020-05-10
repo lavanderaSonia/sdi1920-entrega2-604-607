@@ -1,6 +1,4 @@
 var token;
-var mensajes;
-var amigoSeleccionado;
 var URLbase = "https://localhost:8081/api";
 $("#contenedor-principal").load("widget-login.html");
 if (Cookies.get('token') != null) {
@@ -9,9 +7,11 @@ if (Cookies.get('token') != null) {
     var w = url.searchParams.get("w");
     if (w == "login") {
         clearInterval(idActualizarNoLeidos);
+        clearInterval(idActualizarMensajes);
         $("#contenedor-principal").load("widget-login.html");
     }
     if (w == "amigos") {
+        clearInterval(idActualizarMensajes)
         $("#contenedor-principal").load("widget-amigos.html");
     }
     if (w == "mensajes") {
@@ -21,5 +21,7 @@ if (Cookies.get('token') != null) {
 }
 
 function widgetAmigos() {
+    clearInterval(idActualizarMensajes);
+    clearInterval(idActualizarNoLeidos);
     $("#contenedor-principal").load("widget-amigos.html");
 }

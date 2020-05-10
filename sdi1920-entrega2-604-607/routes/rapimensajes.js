@@ -103,13 +103,6 @@ module.exports = function(app, gestorBD) {
 
 
         })
-
-
-
-
-
-
-
     });
 
     app.post('/api/mensajes/marcarLeidos', function (req, res) {
