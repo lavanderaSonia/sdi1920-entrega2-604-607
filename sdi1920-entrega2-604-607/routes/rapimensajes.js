@@ -70,24 +70,36 @@ module.exports = function(app, gestorBD) {
     });
 
     app.get('/api/mensajes/:id', function (req, res) {
-        let emailEmisor = {
-            email: res.usuario
-        }
+
+
+        let emailEmisor = {email: res.usuario};
+        console.log(emailEmisor)
+
 
         gestorBD.obtenerUsuarios(emailEmisor, function (usuarios) {
             if(usuarios==null || usuarios.length==0){
                 res.status(500);
-                res.json({error: "Error al buscar los mensajes"})
+                res.json({error: "Error al buscar los usuarios"})
             }
             else{
-                    let criterio = {$or: [
-                            {"emisor" : emailEmisor, "destino" : req.params.id},
-                            {"emisor" : req.params.id, "destino" : emailEmisor}
-                        ]  };
+                    let criterio = {
+                        $or: [
+                            {"emisor" : res.usuario, "receptor" : req.params.id},
+                            {"emisor" : req.params.id, "receptor" : res.usuario}
+                        ]
+                    };
 
                     gestorBD.obtenerMensajes(criterio, function (mensajes) {
+                        if(mensajes==null || mensajes.length==0){
+                            res.status(500);
+                            res.json({error: "Error al obtener los mensajes"})
+                        }
+                        else{
                             res.status(200);
                             res.send(JSON.stringify(mensajes))
+                            console.log(JSON.stringify(mensajes))
+                        }
+
                     })
 
             }

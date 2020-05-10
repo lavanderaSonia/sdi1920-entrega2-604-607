@@ -1,5 +1,6 @@
 window.history.pushState("", "", "/cliente.html?w=amigos");
 var amigos=[];
+var amigoSeleccionado="";
 
 // Indicamos que actualice el número de mensajes cada cierto tiempo
 setInterval(function(){
@@ -67,15 +68,13 @@ cargarAmigos();
  * Función que permite mostrar los amigos en la tabla
  * @param amigo amigo que se quiere mostrar
  */
-function mostrarUsuarios(amigo, numNoLeidos){
+function mostrarUsuarios(amigo, numNoLeidos) {
     $("#tablaCuerpo").append(
-            "<tr id=" + amigo._id + ">" +
-            "<td>" + amigo.nombre + "</td>" +
-            "<td><a onclick= mensajes('" + amigo.email + "')><span class='amigo'>" + amigo.email + "</span>" +
-            "<span class='badge' name='numNoLeidos" + amigo.email + "'>" + (numNoLeidos == 0 ? "" : numNoLeidos) + "</span>" + "</a>" +
-            "</div><td></tr>");
-
-
+        "<tr id=" + amigo._id + ">" +
+        "<td>" + amigo.nombre + "</td>" +
+        "<td><a onclick= mensajes('" + amigo.email + "')><span class='amigo'>" + amigo.email + "</span>" +
+        "<span class='badge' name='numNoLeidos" + amigo.email + "'>" + (numNoLeidos == 0 ? "" : numNoLeidos) + "</span>" + "</a>" +
+        "</div><td></tr>");
 }
 
 // Actualiza los mensajes no leídos
