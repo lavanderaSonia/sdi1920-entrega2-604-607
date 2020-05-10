@@ -1,5 +1,6 @@
 window.history.pushState("", "", "/cliente.html?w=amigos");
 var amigos=[];
+var amigoSeleccionado="";
 
 /**
  * Función que me permite cargar los datos de los amigos haciendo uso de las que aparecen a continuación
@@ -66,7 +67,7 @@ function mostrarUsuarios(amigo){
     $("#tablaCuerpo").append(
             "<tr id=" + amigo._id + ">" +
             "<td>" + amigo.nombre + "</td>" +
-            "<td>" + "<a onclick= mensajes('" + amigo.email + "')> amigo.email </a>" +
+            "<td>" + "<a onclick= mensajes('" + amigo.email + "')>" + amigo.email + " </a>" +
             "<td>" +
             "</tr>");
 
@@ -74,7 +75,7 @@ function mostrarUsuarios(amigo){
 }
 
 function mensajes(email){
-    let amigoSeleccionado = email;
+    amigoSeleccionado = email;
     $("#contenedor-principal").load("widget-mensajes.html");
 }
 
