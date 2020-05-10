@@ -1,6 +1,11 @@
 window.history.pushState("", "", "/cliente.html?w=amigos");
 var amigos=[];
 
+// Indicamos que actualice el número de mensajes cada cierto tiempo
+setInterval(function(){
+    actualizarNoLeidos();
+}, 1000);
+
 /**
  * Función que me permite cargar los datos de los amigos haciendo uso de las que aparecen a continuación
  */
@@ -66,11 +71,33 @@ function mostrarUsuarios(amigo, numNoLeidos){
     $("#tablaCuerpo").append(
             "<tr id=" + amigo._id + ">" +
             "<td>" + amigo.nombre + "</td>" +
-            "<td><a onclick= mensajes('" + amigo.email + "')><span>" + amigo.email + "</span>" +
-            (numNoLeidos == 0 ? "" : "<span class='badge'>" + numNoLeidos + "</span>") + "</a>" +
+            "<td><a onclick= mensajes('" + amigo.email + "')><span class='amigo'>" + amigo.email + "</span>" +
+            "<span class='badge' name='numNoLeidos" + amigo.email + "'>" + (numNoLeidos == 0 ? "" : numNoLeidos) + "</span>" + "</a>" +
             "</div><td></tr>");
 
 
+}
+
+// Actualiza los mensajes no leídos
+function actualizarNoLeidos() {
+    $(".amigo").each( function (index) {
+        var amigo =  $(this).text()
+        $.ajax({
+            url: URLbase + "/mensajes/noLeidos/" + amigo,
+            type: "GET",
+            data: { },
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (respuesta) {
+                $("[name ='numNoLeidos" + amigo + "']").html(
+                    JSON.parse(respuesta).length == 0 ? "" : JSON.parse(respuesta).length
+                );
+            },
+            error: function (error) {
+                $("#contenedor-principal").load("widget-login.html");
+            }
+        });
+    });
 }
 
 function obtenerNoLeidos(amigo) {
