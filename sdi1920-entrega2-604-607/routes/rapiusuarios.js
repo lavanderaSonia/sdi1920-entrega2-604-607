@@ -38,13 +38,59 @@ module.exports = function(app, gestorBD) {
                 res.json({error: "se ha producido un error al listar los usuarios"})
             }
             else{
-                //Ahora necesito obtener los ids de los amigos a partir de los emails
-             //   obtenerIdsAmigos(req, res, usuarios[0].amigos);
                 res.status(200);
-                res.json(JSON.stringify(usuarios[0].amigos));
+                res.json(JSON.stringify(ordenarAmigos(usuarios[0].amigos)));
             }
         })
     })
+
+
+    /**
+     * Función que me permite ordenar los amigos por el ultimo mensaje
+     * @param emailsAmigos
+     */
+    function ordenarAmigos(emailsAmigos) {
+        emailsAmigos.sort(function (a, b) {
+            return obtenerUltimoMensajeAmigo(a) > obtenerUltimoMensajeAmigo(b)
+        })
+        console.log(emailsAmigos)
+        return emailsAmigos;
+    }
+
+    /**
+     * Función que me permite sacar el mensaje mas reciente de un amigo
+     * @param emailAmigo
+     * @param req
+     * @param res
+     */
+    function obtenerUltimoMensajeAmigo(emailAmigo, req, res){
+        let criterio = {
+            $or: [
+                {"emisor" : emailAmigo},
+                {"receptor" : emailAmigo}
+
+            ]
+        }
+        gestorBD.obtenerMensajes(criterio, function (mensajes) {
+            if(mensajes==null || mensajes.length==0){
+                res.status(500);
+                res.json({error: "error al obtener los mensajes"})
+            }
+            else{
+                let mensajesObtenidos = mensajes;
+                let mensajeMasReciente=mensajesObtenidos[0];
+                for(let i=0; i<mensajesObtenidos.length; i++){
+                    if((new Date(mensajesObtenidos[i].fecha).getTime() > new Date(mensajeMasReciente.fecha).getTime())){
+                        mensajeMasReciente = mensajesObtenidos[i];
+                    }
+                }
+                console.log(mensajeMasReciente.emisor + " " + mensajeMasReciente.receptor + " " + mensajeMasReciente.texto);
+                return mensajeMasReciente;
+            }
+        })
+    }
+
+
 
   /**  function obtenerIdsAmigos(req, res, amigos) {
         if(amigos==null){
