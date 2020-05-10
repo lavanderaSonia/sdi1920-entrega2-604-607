@@ -67,14 +67,14 @@ function mostrarUsuarios(amigo){
     $("#tablaCuerpo").append(
             "<tr id=" + amigo._id + ">" +
             "<td>" + amigo.nombre + "</td>" +
-            "<td>" + "<a onclick= mensajes('" + amigo.email + "')>" + amigo.email + " </a>" +
+            "<td>" + "<a onclick=abrirChat('" + amigo.email + "')>" + amigo.email + " </a>" +
             "<td>" +
             "</tr>");
 
 
 }
 
-function mensajes(email){
+function abrirChat(email){
     amigoSeleccionado = email;
     $("#contenedor-principal").load("widget-mensajes.html");
 }

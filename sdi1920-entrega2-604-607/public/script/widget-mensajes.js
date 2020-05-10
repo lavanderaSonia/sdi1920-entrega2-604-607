@@ -3,7 +3,7 @@ var mensajes;
 
 
 
-cargarMensajes();
+//cargarMensajes();
 
 function cargarMensajes() {
     $.ajax({
@@ -14,7 +14,6 @@ function cargarMensajes() {
         headers: {"token": token},
         success: function (respuesta) {
             mensajes = respuesta;
-            console.log(mensajes)
             mostrarMensajes(mensajes)
 
         },
@@ -65,14 +64,10 @@ function cargarNombreAmigo(){
     $('#nombreUsuario').text("Chat con el usuario: " + amigoSeleccionado);
 }
 
-var counter = 0;
-var i = setInterval(function(){
-    // do your thing
+var idActualizarMensajes;
+idActualizarMensajes = setInterval(function () {
     cargarMensajes();
-    counter++;
-    if(counter === 10) {
-        clearInterval(i);
-    }
-}, 200);
+}, 1000);
+
 
 

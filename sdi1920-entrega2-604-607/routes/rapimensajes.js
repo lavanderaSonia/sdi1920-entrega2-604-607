@@ -64,10 +64,7 @@ module.exports = function(app, gestorBD) {
 
 
     app.get('/api/mensajes/:id', function (req, res) {
-
-
         let emailEmisor = {email: res.usuario};
-        console.log(emailEmisor)
 
 
         gestorBD.obtenerUsuarios(emailEmisor, function (usuarios) {
@@ -91,7 +88,6 @@ module.exports = function(app, gestorBD) {
                         else{
                             res.status(200);
                             res.send(JSON.stringify(mensajes))
-                            console.log(JSON.stringify(mensajes))
                         }
 
                     })
