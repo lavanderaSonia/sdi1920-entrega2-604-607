@@ -1,0 +1,30 @@
+<link rel="stylesheet" href="css/mensajes.css">
+<div id="widget-mensajes">
+    <div id="alerta"></div>
+	<span class="label label-primary" id="usuarioEnSesion">
+		Usuario en sesión:
+	</span>
+
+    <h2 id="nombreUsuario">
+        Chat con el usuario:
+    </h2>
+
+    <ol id="mensajes" class="scroll"></ol>
+
+</div>
+
+    <div class="row">
+        <div>
+            <div class="input-group">
+                <input type="text" class="form-control"
+                       placeholder="Introduce el mensaje" id="messageContent" />
+                <span class="input-group-btn">
+                        <button id="buttonMessage" class="btn btn-default" onclick="enviarMensaje()">Enviar</button>
+                    </span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="script/widget-mensajes.js"></script>

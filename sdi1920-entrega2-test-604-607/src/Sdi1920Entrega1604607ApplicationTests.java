@@ -15,6 +15,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import tests.pageobjects.PO_AddPublicationView;
+import tests.pageobjects.PO_ChatView;
 import tests.pageobjects.PO_HomeView;
 import tests.pageobjects.PO_ListUserBySearchText;
 import tests.pageobjects.PO_LoginView;
@@ -468,41 +469,42 @@ public class Sdi1920Entrega1604607ApplicationTests {
 		
 	}
 
-	// [Prueba27] Mostrar el listado de publicaciones de un usuario amigo y
-	// comprobar que se muestran todas las que existen para dicho usuario.
+	//[Prueba27] Acceder a la lista de mensajes de un amigo “chat”, 
+	//la lista debe contener al menos tres mensajes.
 	@Test
 	public void prueba27() {
-		PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "sonia@email.com", "pass");
+		driver.navigate().to(URL + "/cliente.html");
 
-		// Navegamos hasta la opción de listar amigos de un usuario en sesión
-		List<WebElement> elementos = PO_View.checkElement(driver, "free", "//li[contains(@id, 'friends-menu')]/a");
+		PO_LoginView.fillForm(driver, "sonia@email.com", "123456");
+
+		List<WebElement> elementos = PO_View.checkElement(driver, "text", "rut@email.com");
 		elementos.get(0).click();
-		elementos = PO_View.checkElement(driver, "free", "//a[contains(@href, '/user/friends/list')]");
-		elementos.get(0).click();
+		
+		PO_View.checkElement(driver, "text", "Holiii");
+		PO_View.checkElement(driver, "text", "Funciona jeje");
+		PO_View.checkElement(driver, "text", "Yuju");
 
-		PO_HomeView.checkElement(driver, "free", "//*[@id=\"friend\"]").get(0).click();
-
-		Assert.assertEquals(2,
-				SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout()).size());
-
-		PO_View.checkElement(driver, "text", "Thalía crea también la aplicación");
-		PO_View.checkElement(driver, "text", "Prueba para las publicaciones de amigos");
 	}
 
-	// [Prueba28] Utilizando un acceso vía URL u otra alternativa, tratar de listar
-	// las publicaciones de un usuario
-	// que no sea amigo del usuario identificado en sesión.
-	// Comprobar que el sistema da un error de autorización.
+	// [Prueba28] Acceder a la lista de mensajes de un amigo “chat” y crear un nuevo mensaje, validar que el
+	// mensaje aparece en la lista de mensajes.
 	@Test
 	public void prueba28() {
-		PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "sonia@email.com", "pass");
+		driver.navigate().to(URL + "/cliente.html");
+		
+		// Nos logueamos con un usuario válido
+		PO_LoginView.fillForm(driver, "sonia@email.com", "123456");
 
-		driver.navigate().to("http://localhost:8090/publication/list/3");
-		PO_View.checkElement(driver, "text", "Error de autorización");
-		PO_View.checkElement(driver, "text",
-				"No puedes acceder a las publicaciones de este usuario, no forma parte de tu lista de amigos");
+		// Comprobamos que estamos en la lista de amigos y entramos a un chat
+		PO_View.checkElement(driver, "text", "Rut");
+		PO_View.checkElement(driver, "id", "chatrut@email.com")
+		.get(0).click();
+		
+		// Enviamos el mensaje
+		PO_ChatView.sendMessage(driver, "Mensaje de la prueba 28");
+		
+		// Comprobamos que aparece el mensaje
+		PO_View.checkElement(driver, "text", "Mensaje de la prueba 28");
 	}
 
 	// Desde el formulario de crear publicaciones, crear una publicación con datos
@@ -539,26 +541,37 @@ public class Sdi1920Entrega1604607ApplicationTests {
 		PO_NavView.checkElement(driver, "id", "photo-Prueba 29");
 	}
 
-	// Crear una publicación con datos válidos y sin una foto adjunta. Comprobar que
-	// la
-	// publicación se ha creado con éxito, ya que la foto no es obligatoria.
+	// Identificarse en la aplicación y enviar tres mensajes a un amigo, validar que los mensajes
+	// enviados aparecen en el chat. Identificarse después con el usuario que recibido el mensaje y validar que el
+	// número de mensajes sin leer aparece en la propia lista de amigos.
 	@Test
 	public void prueba30() {
-		PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "thalia@email.com", "pass");
+		driver.navigate().to(URL + "/cliente.html");
+		
+		// Nos logueamos con un usuario válido
+		PO_LoginView.fillForm(driver, "sonia@email.com", "123456");
 
-		driver.navigate().to(URL);
-
-		PO_HomeView.checkElement(driver, "id", "publications-menu").get(0).click();
-		PO_HomeView.checkElement(driver, "@href", "/publication/add").get(0).click();
-
-		PO_AddPublicationView.fillForm(driver, "Prueba 30", "Esto es una prueba de publicación sin foto.");
-
-		// Comprobamos que estamos en la vista de listar mis publicaciones
-		PO_NavView.checkElement(driver, "text", "Tus publicaciones son las siguientes:");
-
-		// Comprobamos que aparece la nueva publicacion
-		PO_NavView.checkElement(driver, "text", "Prueba 30");
+		// Comprobamos que estamos en la lista de amigos y entramos a un chat
+		PO_View.checkElement(driver, "text", "Rut");
+		PO_View.checkElement(driver, "id", "chatrut@email.com")
+		.get(0).click();
+		
+		// Enviamos los mensajes
+		PO_ChatView.sendMessage(driver, "Primer mensaje de la prueba 30");
+		PO_ChatView.sendMessage(driver, "Segundo mensaje de la prueba 30");
+		PO_ChatView.sendMessage(driver, "Tercer mensaje de la prueba 30");
+		
+		// Comprobamos que aparecen los mensajes
+		PO_View.checkElement(driver, "text", "Primer mensaje de la prueba 30");
+		PO_View.checkElement(driver, "text", "Segundo mensaje de la prueba 30");
+		PO_View.checkElement(driver, "text", "Tercer mensaje de la prueba 30");
+		
+		// Nos logueamos con el otro usuario
+		driver.navigate().to(URL + "/cliente.html");
+		PO_LoginView.fillForm(driver, "rut@email.com", "123456");
+		
+		// Comprobamos que tiene 3 mensajes sin leer
+		PO_View.checkElement(driver, "text", "3");
 	}
 
 	// [Prueba31] Mostrar el listado de usuarios y comprobar que se muestran todos

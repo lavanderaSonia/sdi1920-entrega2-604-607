@@ -126,32 +126,20 @@ module.exports = function (app, swig, gestorBD) {
      * @param emailB, email del usuario B
      */
     function añadirAmigos(emailA, emailB, funcionCallback) {
-        gestorBD.obtenerUsuarios({
-            $or:[
-                { "email": emailA },
-                { "email" : emailB }
-            ]}, function(usuarios){
-                if(usuarios == null || usuarios.length == 0)
-                    funcionCallback(null);
-                else {
-                    usuarios[0].amigos.push( usuarios[0].email == emailA ? emailB : emailA );
-                    usuarios[1].amigos.push( usuarios[1].email == emailA ? emailB : emailA );
-                    // Actualizamos el primer usuario
-                    gestorBD.modificarUsuario( { "email" : usuarios[0].email }, usuarios[0], function(result){
-                        if(result == null)
-                            funcionCallback(null);
-                        else{
-                            // Modificamos el otro usuario
-                            gestorBD.modificarUsuario( { "email" : usuarios[1].email }, usuarios[1], function(result){
-                                if(result == null)
-                                    funcionCallback(null);
-                                else{
-                                    funcionCallback(result);
-                                }
-                            });
-                        }
-                    });
-                }
+        // Añadimos el emailB a amigos del usuario A
+        gestorBD.añadirAAmigos( { "email" : emailA }, emailB, function(result) {
+            if(result == null)
+                funcionCallback(null);
+            else {
+                // Añadimos el emailA a amigos del usuario B
+                gestorBD.añadirAAmigos( { "email" : emailB }, emailA , function(result) {
+                    if(result == null)
+                        funcionCallback(null);
+                    else {
+                        funcionCallback(result);
+                    }
+                });
+            }
         });
     }
 }

@@ -167,6 +167,29 @@ module.exports = {
         });
     },
     /**
+     * Añade un usuario a la lista de amigos
+     * @param criterio
+     * @param amigo
+     * @param funcionCallback
+     */
+    añadirAAmigos(criterio, amigo, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('usuarios');
+                collection.update(criterio, {$push: { "amigos" : amigo }}, function(err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+    /**
      * Elimina la invitación indicada por el criterio
      * @param criterio, criterio a seguir
      * @param funcionCallback
@@ -187,5 +210,68 @@ module.exports = {
                 });
             }
         });
+    },
+    /**
+     * Inserta un mensaje
+     * @param mensaje
+     * @param funcionCallback
+     */
+    insertarMensaje : function(mensaje, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('mensajes');
+                collection.insertOne(mensaje, function (err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result.ops[0]._id);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+    obtenerMensajes(criterio, funcionCallback){
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('mensajes');
+                collection.find(criterio).toArray(function (err, mensajes) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(mensajes);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+    /**
+     * Actualiza todos los mensajes que cumplan el criterio especificiado
+     * @param criterio, criterio a seguir
+     * @param cambio, cambio que se realiza
+     * @param funcionCallback
+     */
+    modificarMensaje : function(criterio, cambio, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('mensajes');
+                collection.updateMany(criterio, { $set: cambio }, function(err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
     }
+
 };

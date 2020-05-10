@@ -81,6 +81,8 @@ routerUsuarioToken.use(function (req, res, next) {
 // Aplicar routerUsuarioToken
 app.use('/api/amigos', routerUsuarioToken);
 app.use('/api/amigos/*', routerUsuarioToken);
+app.use('/api/mensaje', routerUsuarioToken);
+app.use('/api/mensajes/*', routerUsuarioToken);
 
 
 // routerUsuarioSession
@@ -117,6 +119,7 @@ app.set('crypto', crypto);
 require("./routes/rusuarios")(app, swig, gestorBD); //(app,param1, param2, etc.)
 require("./routes/rinvitaciones")(app, swig, gestorBD);
 require("./routes/rapiusuarios.js")(app, gestorBD);
+require("./routes/rapimensajes.js")(app, gestorBD);
 
 app.get('/', function (req, res) {
     res.redirect('/identificarse');
