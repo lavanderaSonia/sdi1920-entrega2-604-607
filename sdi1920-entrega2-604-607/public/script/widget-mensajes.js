@@ -56,7 +56,7 @@ function leerMensajes() {
         dataType: 'json',
         headers: {"token": token},
         success: function (respuesta) {
-            actualizado = true;
+            comprobarMensajesLeidos();
         },
         error: function (error) {
             $("#alerta").html("<span class='alert-danger'>Se ha producido un error</span>");
@@ -81,12 +81,39 @@ function mostrarMensajes(mensajes){
             conversacion += "<li class='self'>" +
                 "<div class='msg'>" +
                 "<p>" + mensaje.emisor + "</p>" +
-                "<p>" + mensaje.texto + "</p>" + "</div>"
+                "<p>" + mensaje.texto + "</p>" +
+                "<span id='" + mensaje._id.toString() + "' class='leido'>" +
+                (mensaje.leido ?  "<img src='/img/visto.png' />" : "") + "</span>"
+                + "</div>"
             ;
             conversacion += "</li>";
         }
 
         $("#mensajes").append(conversacion);
+    }
+}
+
+function comprobarMensajesLeidos() {
+    $.ajax({
+        url: URLbase + "/mensajes/leidos/" + amigoSeleccionado,
+        type: "GET",
+        data: { },
+        dataType: 'json',
+        headers: {"token": token},
+        success: function (respuesta) {
+            console.log(respuesta)
+            marcarComoLeidos(JSON.parse(respuesta));
+            actualizado = true;
+        },
+        error: function (error) {
+            $("#contenedor-principal").load("widget-login.html");
+        }
+    });
+}
+
+function marcarComoLeidos(mensajes) {
+    for(var i = 0; i < mensajes.length; i++) {
+        $("#" + mensajes[i]._id.toString()).html("<img src='/img/visto.png' />");
     }
 }
 
@@ -98,8 +125,9 @@ function cargarNombreAmigo(){
 
 var idActualizarMensajes;
 idActualizarMensajes = setInterval(function () {
-    if(amigoSeleccionado!="")
+    if(amigoSeleccionado!="") {
         actualizarMensajes();
+    }
     else
         clearInterval(idActualizarMensajes)
 }, 1000);
@@ -124,7 +152,9 @@ function enviarMensaje() {
         success: function (respuesta) {
             var mensaje = [ {
                 emisor : JSON.parse(respuesta).emisor,
-                texto: $("#messageContent").val()
+                texto: $("#messageContent").val(),
+                leido: false,
+                _id : JSON.parse(respuesta)._id
             }];
             mostrarMensajes(mensaje);
             $("#messageContent").val("");

@@ -55,3 +55,11 @@ html, body {
     height: 55%;
     width: 100%;
 }
+
+.leido {
+    margin: 0 0  0 90%;
+}
+
+.leido img {
+    width: 7%;
+}

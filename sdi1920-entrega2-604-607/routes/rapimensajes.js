@@ -23,7 +23,8 @@ module.exports = function(app, gestorBD) {
                             res.status(200);
                             res.json(JSON.stringify({
                                 enviado : true,
-                                emisor : res.usuario
+                                emisor : res.usuario,
+                                _id : gestorBD.mongo.ObjectID(result)
                             }));
                         }
                     });
@@ -154,6 +155,25 @@ module.exports = function(app, gestorBD) {
                 res.status(200);
                 res.json(JSON.stringify(result));
             }
+        });
+    });
+
+    app.get("/api/mensajes/leidos/:amigo", function(req, res) {
+        // Primero obtenemos los ids para devolverlos después y saber cuales marcar en el widget
+        gestorBD.obtenerMensajes( { "emisor" : res.usuario, "receptor": req.params.amigo, "leido": true, "releido": false }, function(mensajes) {
+            // Ahora actualizamos los mismos para marcarlos como releidos
+            gestorBD.modificarMensaje( { "emisor" : res.usuario, "receptor": req.params.amigo, "leido": true, "releido": false },
+                {"releido" : true}, function(result) {
+                    if(result == null) {
+                        res.status(500);
+                        res.json({
+                            modificado : false
+                        });
+                    } else {
+                        res.status(200);
+                        res.json(JSON.stringify(mensajes));
+                    }
+                });
         });
     });
 
