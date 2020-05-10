@@ -19,5 +19,6 @@ if (Cookies.get('token') != null) {
 }
 
 function widgetAmigos() {
+    clearInterval(idActualizarMensajes)
     $("#contenedor-principal").load("widget-amigos.html");
 }
