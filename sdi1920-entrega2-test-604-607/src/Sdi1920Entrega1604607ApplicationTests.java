@@ -469,26 +469,21 @@ public class Sdi1920Entrega1604607ApplicationTests {
 		
 	}
 
-	// [Prueba27] Mostrar el listado de publicaciones de un usuario amigo y
-	// comprobar que se muestran todas las que existen para dicho usuario.
+	//[Prueba27] Acceder a la lista de mensajes de un amigo “chat”, 
+	//la lista debe contener al menos tres mensajes.
 	@Test
 	public void prueba27() {
-		PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "sonia@email.com", "pass");
+		driver.navigate().to(URL + "/cliente.html");
 
-		// Navegamos hasta la opción de listar amigos de un usuario en sesión
-		List<WebElement> elementos = PO_View.checkElement(driver, "free", "//li[contains(@id, 'friends-menu')]/a");
+		PO_LoginView.fillForm(driver, "sonia@email.com", "123456");
+
+		List<WebElement> elementos = PO_View.checkElement(driver, "text", "rut@email.com");
 		elementos.get(0).click();
-		elementos = PO_View.checkElement(driver, "free", "//a[contains(@href, '/user/friends/list')]");
-		elementos.get(0).click();
+		
+		PO_View.checkElement(driver, "text", "Holiii");
+		PO_View.checkElement(driver, "text", "Funciona jeje");
+		PO_View.checkElement(driver, "text", "Yuju");
 
-		PO_HomeView.checkElement(driver, "free", "//*[@id=\"friend\"]").get(0).click();
-
-		Assert.assertEquals(2,
-				SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout()).size());
-
-		PO_View.checkElement(driver, "text", "Thalía crea también la aplicación");
-		PO_View.checkElement(driver, "text", "Prueba para las publicaciones de amigos");
 	}
 
 	// [Prueba28] Acceder a la lista de mensajes de un amigo “chat” y crear un nuevo mensaje, validar que el
