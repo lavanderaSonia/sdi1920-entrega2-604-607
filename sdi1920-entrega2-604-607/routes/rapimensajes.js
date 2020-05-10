@@ -64,9 +64,9 @@ module.exports = function(app, gestorBD) {
 
 
     app.get('/api/mensajes/:id', function (req, res) {
-        let emailEmisor = {
-            email: res.usuario
-        }
+
+
+        let emailEmisor = {email: res.usuario};
         console.log(emailEmisor)
 
 
@@ -78,8 +78,8 @@ module.exports = function(app, gestorBD) {
             else{
                     let criterio = {
                         $or: [
-                            {"emisor" : emailEmisor, "receptor" : req.params.id},
-                            {"emisor" : req.params.id, "receptor" : emailEmisor}
+                            {"emisor" : res.usuario, "receptor" : req.params.id},
+                            {"emisor" : req.params.id, "receptor" : res.usuario}
                         ]
                     };
 
