@@ -262,7 +262,7 @@ module.exports = {
                 funcionCallback(null);
             } else {
                 let collection = db.collection('mensajes');
-                collection.update(criterio, { $set: cambio }, {multi : true, upsert: true}, function(err, result) {
+                collection.updateMany(criterio, { $set: cambio }, function(err, result) {
                     if (err) {
                         funcionCallback(null);
                     } else {

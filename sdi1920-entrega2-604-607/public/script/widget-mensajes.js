@@ -37,10 +37,10 @@ function leerMensajes() {
         dataType: 'json',
         headers: {"token": token},
         success: function (respuesta) {
-            console.log(JSON.parse(respuesta));
+
         },
         error: function (error) {
-            $("#contenedor-principal").load("widget-login.html");
+            $("#alerta").html("<span class='alert-danger'>Se ha producido un error</span>");
         }
     });
 }

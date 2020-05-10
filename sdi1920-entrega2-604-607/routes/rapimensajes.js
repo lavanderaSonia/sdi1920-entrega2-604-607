@@ -113,8 +113,12 @@ module.exports = function(app, gestorBD) {
     });
 
     app.post('/api/mensajes/marcarLeidos', function (req, res) {
-        gestorBD.modificarMensaje( {"emisor" : req.body.amigo, "receptor": res.usuario, "leido": false}, {"leido" : true}
-        , function(result){
+        // Marcamos todos los mensajes recibidos del amigo seleccionado como leídos
+        // Además añadimos un nuevo atributo releido, que nos servirá para comprobar en el chat del otro usuario
+        // los cambios en los estados leido
+        // Seleccionamos solo los no leídos
+        gestorBD.modificarMensaje( {"emisor" : req.body.amigo, "receptor": res.usuario, "leido": false},
+            {"leido" : true, "releido": false}, function(result){
             if(result == null){
                 res.status(500);
                 res.json({error: "Error al marcar como leídos los mensajes", result : result});
