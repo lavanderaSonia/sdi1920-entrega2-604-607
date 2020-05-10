@@ -58,6 +58,7 @@ module.exports = function(app, gestorBD) {
     }
 
     app.get("/api/mensajes/noLeidos/:amigo", function(req, res) {
+        console.log("Mensajes no leídos de " + req.params.amigo + " a " + res.usuario);
         gestorBD.obtenerMensajes({ "emisor" : req.params.amigo, "receptor": res.usuario, "leido": false}, function(result) {
             if(result == null) {
                 res.status(500);
@@ -71,10 +72,7 @@ module.exports = function(app, gestorBD) {
 
     app.get('/api/mensajes/:id', function (req, res) {
 
-
         let emailEmisor = {email: res.usuario};
-        console.log(emailEmisor)
-
 
         gestorBD.obtenerUsuarios(emailEmisor, function (usuarios) {
             if(usuarios==null || usuarios.length==0){
@@ -96,8 +94,7 @@ module.exports = function(app, gestorBD) {
                         }
                         else{
                             res.status(200);
-                            res.send(JSON.stringify(mensajes))
-                            console.log(JSON.stringify(mensajes))
+                            res.send(JSON.stringify(mensajes));
                         }
 
                     })

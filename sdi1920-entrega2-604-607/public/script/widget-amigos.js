@@ -1,9 +1,10 @@
 window.history.pushState("", "", "/cliente.html?w=amigos");
 var amigos=[];
 var amigoSeleccionado="";
-
+var idActualizarNoLeidos;
 // Indicamos que actualice el número de mensajes cada cierto tiempo
-setInterval(function(){
+// Guardamos el id para parar la ejecución cuando cambia el widget
+idActualizarNoLeidos = setInterval(function(){
     actualizarNoLeidos();
 }, 1000);
 
@@ -72,7 +73,7 @@ function mostrarUsuarios(amigo, numNoLeidos) {
     $("#tablaCuerpo").append(
         "<tr id=" + amigo._id + ">" +
         "<td>" + amigo.nombre + "</td>" +
-        "<td><a onclick= mensajes('" + amigo.email + "')><span class='amigo'>" + amigo.email + "</span>" +
+        "<td><a onclick= mensajes('" + amigo.email + "') id='chat" + amigo.email + "'><span class='amigo'>" + amigo.email + "</span>" +
         "<span class='badge' name='numNoLeidos" + amigo.email + "'>" + (numNoLeidos == 0 ? "" : numNoLeidos) + "</span>" + "</a>" +
         "</div><td></tr>");
 }

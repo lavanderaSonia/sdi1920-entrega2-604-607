@@ -68,10 +68,10 @@ function cargarNombreUsuario(){
 
 }
 
-/**setInterval(function(){
+setInterval(function(){
     cargarMensajes();
 }, 1000);
-*/
+
 
 /**
  * Envia un mensaje al chat
