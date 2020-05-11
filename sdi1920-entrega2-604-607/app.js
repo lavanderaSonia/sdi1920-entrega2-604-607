@@ -48,6 +48,25 @@ app.use(express.static('public'));
 let gestorBD = require("./modules/gestorBD.js");
 gestorBD.init(app, mongo);
 
+
+var log4js = require('log4js');
+
+// Configuramos el logger
+log4js.configure({
+    appenders: {
+        out: { 	// para la salida estándar
+            type: 'stdout'
+        },
+        file: { 	// para la salida a un fichero de log
+            type: 'file', filename: 'logs/RedSocialNode.log'
+        }
+    },
+    categories: {
+        default: { appenders: [ 'out', 'file' ], level: 'info' }
+    }
+});
+var logger = log4js.getLogger();
+
 // routerUsuarioToken
 var routerUsuarioToken = express.Router();
 routerUsuarioToken.use(function (req, res, next) {
@@ -113,6 +132,7 @@ app.set('port', 8081);
 app.set('db', 'mongodb://admin:sdiadmin1920607@tiendamusica-shard-00-00-9fg70.mongodb.net:27017,tiendamusica-shard-00-01-9fg70.mongodb.net:27017,tiendamusica-shard-00-02-9fg70.mongodb.net:27017/test?ssl=true&replicaSet=tiendamusica-shard-0&authSource=admin&retryWrites=true&w=majority');
 app.set('clave', 'abcdefg');
 app.set('crypto', crypto);
+app.set('logger', logger);
 
 
 //Rutas/controladores por lógica

@@ -11,5 +11,8 @@
     "mongodb": "^2.2.33",
     "request": "^2.88.2",
     "swig": "^1.4.2"
+  },
+  "devDependencies": {
+    "log4js": "^6.2.1"
   }
 }

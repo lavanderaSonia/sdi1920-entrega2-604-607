@@ -1,7 +1,9 @@
 module.exports = function (app, swig, gestorBD) {
 
 
-
+    /**
+     * Me devuelve la vista de registro
+     */
     app.get("/registrarse", function (req, res) {
         let respuesta = swig.renderFile('views/bregistro.html', {});
         res.send(respuesta);
@@ -25,6 +27,7 @@ module.exports = function (app, swig, gestorBD) {
         }
         validarDatosRegistroUsuario(usuario, function (errors) {
             if(errors!==null && errors.length>0){
+                app.get("logger").info("Se han producido errores a la hora de registrarse");
                 res.redirect("/registrarse?mensaje=" + errors +  "&tipoMensaje=alert-danger ");
             }
             else{
@@ -38,13 +41,16 @@ module.exports = function (app, swig, gestorBD) {
                 let criterio = {email:usuarioInsertar.email}
                 comprobarEmailRepetido(criterio, function (usuarios) {
                     if(usuarios!=null && usuarios.length>0){
+                        app.get("logger").info("Se ha intentado hacer un registro con un email ya existente");
                         res.redirect("/registrarse?mensaje=Email repetido en el sistema&tipoMensaje=alert-danger");
                     }
                     else{
                         gestorBD.insertarUsuario(usuarioInsertar, function (id) {
                             if (id == null) {
+                                app.get("logger").info("Se ha producido un error al insertar el usuario");
                                 res.redirect("/registrarse?mensaje=Error al registrar usuario&tipoMensaje=alert-danger");
                             } else {
+                                app.get("logger").info("El usuario se ha registrado correctamente");
                                 res.redirect("/identificarse?mensaje=Nuevo usuario registrado");
                             }
                         });
@@ -68,6 +74,7 @@ module.exports = function (app, swig, gestorBD) {
        let amigos = [];
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
                 if(usuarios==null){
+                    app.get("logger").info("Se ha producido un error al intentar obtener los amigos de " + req.session.usuario);
                     res.send("Error al listar  usuarios");
                 }
                 else{
@@ -101,6 +108,7 @@ module.exports = function (app, swig, gestorBD) {
         }
         gestorBD.obtenerUsuariosPg(criterio, pg, function (amigos, total) {
             if(amigos==null){
+                app.get("logger").info("Se ha producido un error al intentar obtener los amigos de " + req.session.usuario);
                 res.send("Error al buscar usuarios por emails");
             }
             else{
@@ -115,6 +123,8 @@ module.exports = function (app, swig, gestorBD) {
                         paginas.push(i);
                     }
                 }
+
+                app.get("logger").info("Se han listado correctamente los amigos de " + req.session.usuario);
 
                 let respuesta = swig.renderFile('views/bamigos.html', {
                     amigos: amigos, paginas: paginas, actual: pg, email:req.session.usuario
@@ -147,6 +157,7 @@ module.exports = function (app, swig, gestorBD) {
         }
         gestorBD.obtenerUsuariosPg(criterio, pg, function (usuarios, total) {
             if (usuarios == null) {
+                app.get("logger").info("Se ha producido un error al intentar listar los usuarios de la aplicación por parte de " + req.session.usuario);
                 res.send("Error al listar ");
             } else {
                 let ultimaPg = total / 4;
@@ -162,9 +173,13 @@ module.exports = function (app, swig, gestorBD) {
 
                 // Obtenemos el usuario en sesión para saber cuales son sus amigos y no mostrar el enlace de 'Añadir amigo'
                 gestorBD.obtenerUsuarios({ "email" : req.session.usuario }, function(usuarioSesion){
-                    if(usuarios == null || usuarios.length == 0)
+                    if(usuarios == null || usuarios.length == 0){
+                        app.get("logger").info("Se ha producido un error al intentar obtener los usuarios de la app por parte de " + req.session.usuario);
                         res.send("Se ha producido un error");
+                    }
+
                     else {
+                        app.get("logger").info("Se han listado los usuarios de la app de forma correcta por parte de  " + req.session.usuario);
                         let respuesta = swig.renderFile('views/busuarios.html', {
                             usuarios: usuarios,
                             paginas: paginas,
@@ -226,6 +241,9 @@ module.exports = function (app, swig, gestorBD) {
                 functionCallback(errores);
     }
 
+    /**
+     * Me devuelve la vista para identificarse
+     */
     app.get("/identificarse", function (req, res) {
         let respuesta = swig.renderFile('views/bidentificacion.html', {});
         res.send(respuesta);
@@ -245,17 +263,23 @@ module.exports = function (app, swig, gestorBD) {
         }
         gestorBD.obtenerUsuarios(criterio, function(usuarios) {
             if (usuarios == null || usuarios.length == 0) {
+                app.get("logger").info("Se ha producido un error al intentar acceder a la app ");
+
                 req.session.usuario = null;
                 res.redirect("/identificarse" +
                     "?mensaje=Email o password incorrecto"+
                     "&tipoMensaje=alert-danger ");
             } else {
                 req.session.usuario = usuarios[0].email;
+                app.get("logger").info("Se ha iniciado sesión de forma correcta por parte de " + req.session.usuario);
                 res.redirect("/usuarios");
             }
         });
     });
 
+    /**
+     * Permite salir de sesión y redirigir a la página de inicio de sesión
+     */
     // Sale de sesión y redirige a la página de inicio de sesión
     app.get('/desconectarse', function (req, res) {
         req.session.usuario = null;
