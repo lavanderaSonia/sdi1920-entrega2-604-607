@@ -1,5 +1,8 @@
 module.exports = function(app, gestorBD) {
 
+    /**
+     * Permite autenticarnos en la aplicación
+     */
     app.post("/api/autenticar", function(req, res) {
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
@@ -7,11 +10,13 @@ module.exports = function(app, gestorBD) {
         gestorBD.obtenerUsuarios({ "email" : req.body.email, "password" : seguro},
             function(usuarios) {
                 if(usuarios == null || usuarios.length == 0) {
+                    app.get("logger").info("Error al obtener el usuario con ese email y contraseña");
                     res.status(401);
                     res.json({
                         autenticado : false
                     });
                 } else {
+                    app.get("logger").info("Autenticación correcta de " + req.body.email);
                     // Creamos un token para el usuario que se acaba de identificar
                     var token = app.get('jwt').sign(
                         {
@@ -27,6 +32,9 @@ module.exports = function(app, gestorBD) {
             });
     });
 
+    /**
+     * Permite listar los amigos de un usuario
+     */
     app.get('/api/amigos', function (req, res) {
 
         let criterio = {email: res.usuario};
@@ -34,10 +42,12 @@ module.exports = function(app, gestorBD) {
         //Obtenemos los emails de los amigos del usuario en sesión
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
             if(usuarios==null){
+                app.get("logger").info("Se ha producido un error al listar los amigos " + res.usuario);
                 res.status(500);
                 res.json({error: "se ha producido un error al listar los usuarios"})
             }
             else{
+                app.get("logger").info("Amigos listados de forma correcta " + res.usuario);
                 res.status(200);
                 res.json(JSON.stringify(ordenarAmigos(usuarios[0].amigos, req, res)));
             }
@@ -67,7 +77,7 @@ module.exports = function(app, gestorBD) {
 
     /**
      * Función que me permite sacar el mensaje mas reciente de un amigo
-     * @param emailAmigo
+     * @param emailAmigo email del amigo
      * @param req
      * @param res
      */
@@ -99,51 +109,23 @@ module.exports = function(app, gestorBD) {
     }
 
 
-
-  /**  function obtenerIdsAmigos(req, res, amigos) {
-        if(amigos==null){
-            res.status(500);
-            res.json({error: "se ha producido un error al listar los amigos"})
-        }
-        else{
-            let criterio = {
-                email: {
-                    $in: amigos
-                }
-            }
-            gestorBD.obtenerUsuarios(criterio, function (usuarios) {
-                if(usuarios==null){
-                    res.status(500);
-                    res.json({error: "se ha producido un error al listar los usuarios"})
-                }
-                else{
-                    let idsAmigos=[];
-                    //Voy a añadir a mi array de ids de amigos cada uno de los ids de esos amigos
-                    for(let amigo in usuarios){
-                        idsAmigos.push(usuarios[amigo]._id);
-                    }
-                    res.status(200);
-                    res.json(JSON.stringify(idsAmigos));
-                }
-            })
-
-        }
-
-    }*/
-
+    /**
+     * Permite obtener los datos del amigo con ese email pasado como parámetro.
+     * Nos va a devolver el usuario con todos los datos
+     */
     app.get('/api/amigos/:email', function (req, res) {
         let criterio = {
-            //"_id": gestorBD.mongo.ObjectID(req.params.id)
-
             email: req.params.email
         }
 
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
-            if(usuarios==null){
+            if(usuarios==null || usuarios.length==0){
+                app.get("logger").info("Se ha producido un error al listar los amigos " + res.usuario);
                 res.status(500);
                 res.json({error: "Error al listar los usuarios"})
             }
             else{
+                app.get("logger").info("Obtención de información de los amigos de forma correcta " + res.usuario);
                 res.status(200);
                 res.json(JSON.stringify(usuarios[0]));
             }
