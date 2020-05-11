@@ -60,6 +60,8 @@ public class Sdi1920Entrega1604607ApplicationTests {
 	// Antes de la primera prueba
 	@BeforeClass
 	static public void begin() {
+		driver.navigate().to(URL + "/resetear");
+		PO_View.checkElement(driver, "text", "Reseteado");
 	}
 
 	// Al finalizar la última prueba
@@ -201,15 +203,16 @@ public class Sdi1920Entrega1604607ApplicationTests {
 		// PO_HomeView.clickOption(driver, "identificarse", "class", "btn btn-primary");
 		PO_LoginView.fillForm(driver, "sonia@email.com", "123456");
 
-		// Comprobamos que son 3 en total
-		// Thalía y yo + Ana
-		Assert.assertEquals(3,
+		// Comprobamos que son 4 en total
+		// Thalía, Rut, Edward, yo (Ana no sale por la paginacion)
+		Assert.assertEquals(4,
 				SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout()).size());
 
 		// Comprobamos que son los usuarios esperados
 		PO_View.checkElement(driver, "text", "thalia@email.com");
 		PO_View.checkElement(driver, "text", "sonia@email.com");
-		PO_View.checkElement(driver, "text", "ana@email.com");
+		PO_View.checkElement(driver, "text", "edward@email.com");
+		PO_View.checkElement(driver, "text", "rut@email.com");
 
 	}
 
@@ -224,15 +227,16 @@ public class Sdi1920Entrega1604607ApplicationTests {
 		PO_ListUserBySearchText.fillSearchText(driver, "");
 
 		// Me salen todos los usuarios del sistema
-		// Comprobamos que son 3 en total
-		// Thalía y yo + Ana
-		Assert.assertEquals(3,
+		// Comprobamos que son 5 en total
+		// Thalía, Rut, Edward, yo (Ana no sale por la paginacion)
+		Assert.assertEquals(4,
 				SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout()).size());
 
 		// Comprobamos que son los usuarios esperados
 		PO_View.checkElement(driver, "text", "thalia@email.com");
 		PO_View.checkElement(driver, "text", "sonia@email.com");
-		PO_View.checkElement(driver, "text", "ana@email.com");
+		PO_View.checkElement(driver, "text", "edward@email.com");
+		PO_View.checkElement(driver, "text", "rut@email.com");
 	}
 
 	// [Prueba13] Hacer una búsqueda escribiendo en el campo un texto que no exista
@@ -249,9 +253,10 @@ public class Sdi1920Entrega1604607ApplicationTests {
 
 		// Comprobamos que son los usuarios esperados o sea no coincide con ninguno de
 		// los del sistema
-		SeleniumUtils.EsperaCargaPaginaNoTexto(driver, "thalia@email.com", PO_View.getTimeout());
-		SeleniumUtils.EsperaCargaPaginaNoTexto(driver, "sonia@email.com", PO_View.getTimeout());
-		SeleniumUtils.EsperaCargaPaginaNoTexto(driver, "ana@email.com", PO_View.getTimeout());
+		PO_View.checkElement(driver, "text", "thalia@email.com");
+		PO_View.checkElement(driver, "text", "sonia@email.com");
+		PO_View.checkElement(driver, "text", "edward@email.com");
+		PO_View.checkElement(driver, "text", "rut@email.com");
 
 	}
 
@@ -284,13 +289,13 @@ public class Sdi1920Entrega1604607ApplicationTests {
 		PO_LoginView.fillForm(driver, "thalia@email.com", "123456");
 
 		// Ya estamos en la lista de usuarios, asique mandamos una invitación
-		PO_View.checkElement(driver, "id", "send/sonia@email.com").get(0).click();
+		PO_View.checkElement(driver, "id", "send/rut@email.com").get(0).click();
 		// Comprobamos que sale el mensaje de invitación enviada
-		PO_View.checkElement(driver, "text", "Invitación enviada correctamente a Sonia");
+		PO_View.checkElement(driver, "text", "Invitación enviada correctamente a Rut");
 
 		// Salimos para ir a la otra cuenta
 		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "sonia@email.com", "123456");
+		PO_LoginView.fillForm(driver, "rut@email.com", "123456");
 		// Comprobamos que ha llegado la invitación
 		PO_PrivateView.goToInvitations(driver);
 		PO_NavView.checkElement(driver, "text", "Thalía");
@@ -305,9 +310,9 @@ public class Sdi1920Entrega1604607ApplicationTests {
 		PO_LoginView.fillForm(driver, "thalia@email.com", "123456");
 
 		// Intentamos enviar la invitación
-		PO_View.checkElement(driver, "id", "send/edward@email.com").get(0).click();
+		PO_View.checkElement(driver, "id", "send/rut@email.com").get(0).click();
 		// Comprobamos que sale el mensaje de invitación ya enviada/recibida
-		PO_View.checkElement(driver, "text", "Ya existe una invitación a/de Edward");
+		PO_View.checkElement(driver, "text", "Ya existe una invitación a/de Rut");
 	}
 
 	// Mostrar el listado de invitaciones de amistad recibidas. Comprobar con un
@@ -358,11 +363,13 @@ public class Sdi1920Entrega1604607ApplicationTests {
 		elementos.get(0).click();
 
 		// Comprobamos el número de amigos del usuario
-		Assert.assertEquals(1,
+		Assert.assertEquals(3,
 				SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout()).size());
 
 		// Comprobamos que son los usuarios esperados
 		PO_NavView.checkElement(driver, "text", "thalia@email.com");
+		PO_NavView.checkElement(driver, "text", "rut@email.com");
+		PO_NavView.checkElement(driver, "text", "edward@email.com");
 	}
 
 	// Intentar acceder sin estar autenticado a la opción de listado de usuarios. Se
@@ -480,9 +487,8 @@ public class Sdi1920Entrega1604607ApplicationTests {
 		List<WebElement> elementos = PO_View.checkElement(driver, "text", "rut@email.com");
 		elementos.get(0).click();
 		
-		PO_View.checkElement(driver, "text", "Holiii");
-		PO_View.checkElement(driver, "text", "Funciona jeje");
-		PO_View.checkElement(driver, "text", "Yuju");
+		PO_View.checkElement(driver, "text", "Primer mensaje enviado");
+		PO_View.checkElement(driver, "text", "Comprobando que funciona");
 
 	}
 

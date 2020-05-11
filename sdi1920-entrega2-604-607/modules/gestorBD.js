@@ -272,6 +272,40 @@ module.exports = {
                 });
             }
         });
+    },
+    resetear : function(funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let coleccion = db.collection('invitaciones');
+                coleccion.remove({}, function(result) {
+                    coleccion = db.collection('usuarios');
+                    coleccion.remove({}, function(result) {
+                        coleccion =db.collection('mensajes');
+                        coleccion.remove({}, function(result) {
+                            funcionCallback(result);
+                        });
+                    });
+                });
+            }
+        });
+    },
+    insertarVarios : function(coleccion, datos, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection(coleccion);
+                collection.insertMany(datos, function (err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
     }
-
 };
