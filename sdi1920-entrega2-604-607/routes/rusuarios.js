@@ -113,8 +113,8 @@ module.exports = function (app, swig, gestorBD) {
             }
             else{
 
-                let ultimaPg = total / 4;
-                if (total % 4 > 0) { // Sobran decimales
+                let ultimaPg = total / 5;
+                if (total % 5 > 0) { // Sobran decimales
                     ultimaPg = ultimaPg + 1;
                 }
                 let paginas = []; // paginas mostrar
@@ -160,8 +160,8 @@ module.exports = function (app, swig, gestorBD) {
                 app.get("logger").info("Se ha producido un error al intentar listar los usuarios de la aplicación por parte de " + req.session.usuario);
                 res.send("Error al listar ");
             } else {
-                let ultimaPg = total / 4;
-                if (total % 4 > 0) { // Sobran decimales
+                let ultimaPg = total / 5;
+                if (total % 5 > 0) { // Sobran decimales
                     ultimaPg = ultimaPg + 1;
                 }
                 let paginas = []; // paginas mostrar
