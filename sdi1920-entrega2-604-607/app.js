@@ -34,8 +34,7 @@ app.use(expressSession({
 
 let crypto = require('crypto');
 
-let fileUpload = require('express-fileupload');
-app.use(fileUpload());
+
 let mongo = require('mongodb');
 let swig = require('swig');
 let bodyParser = require('body-parser');
@@ -51,13 +50,12 @@ gestorBD.init(app, mongo);
 
 var log4js = require('log4js');
 
-// Configuramos el logger
 log4js.configure({
     appenders: {
-        out: { 	// para la salida estándar
+        out: {
             type: 'stdout'
         },
-        file: { 	// para la salida a un fichero de log
+        file: {
             type: 'file', filename: 'logs/RedSocialNode.log'
         }
     },
@@ -107,11 +105,9 @@ app.use('/api/mensajes/*', routerUsuarioToken);
 // routerUsuarioSession
 let routerUsuarioSession = express.Router();
 routerUsuarioSession.use(function (req, res, next) {
-    console.log("routerUsuarioSession");
     if (req.session.usuario) { // dejamos correr la petición
         next();
     } else {
-        console.log("va a : " + req.session.destino);
         res.redirect("/identificarse" +
             "?mensaje=Intento de acceso a zona restringida"+
             "&tipoMensaje=alert-danger ");
@@ -147,7 +143,6 @@ app.get('/', function (req, res) {
 
 
 app.use(function (err, req, res, next) {
-    console.log("Error producido: " + err); //mostramos el error en consola
     if (!res.headersSent) {
         res.status(400);
         res.send("Recurso no disponible");

@@ -71,7 +71,6 @@ module.exports = function(app, gestorBD) {
      * Permite listar los mensajes que están en estado no leido por parte del parámetro amigo que será el email de este
      */
     app.get("/api/mensajes/noLeidos/:amigo", function(req, res) {
-        //console.log("Mensajes no leídos de " + req.params.amigo + " a " + res.usuario);
         gestorBD.obtenerMensajes({ "emisor" : req.params.amigo, "receptor": res.usuario, "leido": false}, function(result) {
             if(result == null) {
                 app.get("logger").info("Error al buscar los mensajes");

@@ -7,7 +7,6 @@ leerMensajes();
 cargarMensajes();
 
 function cargarMensajes() {
-    console.log("Se muestra 1 vez")
     $.ajax({
         url: URLbase + "/mensajes/" + amigoSeleccionado,
         type: "GET",
@@ -31,7 +30,6 @@ function actualizarMensajes() {
     if(!actualizado)
         return;
     actualizado = false;
-    console.log("Se muestra cada poco")
     $.ajax({
         url: URLbase + "/mensajes/noLeidos/" + amigoSeleccionado,
         type: "GET",
@@ -104,7 +102,6 @@ function comprobarMensajesLeidos() {
         dataType: 'json',
         headers: {"token": token},
         success: function (respuesta) {
-            console.log(respuesta)
             marcarComoLeidos(JSON.parse(respuesta));
             actualizado = true;
         },

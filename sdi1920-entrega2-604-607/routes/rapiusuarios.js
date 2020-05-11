@@ -71,7 +71,6 @@ module.exports = function(app, gestorBD) {
                 return true;
             return mensajeA.fecha > mensajeB.fecha;
         })
-        console.log(emailsAmigos)
         return emailsAmigos;
     }
 
@@ -102,7 +101,6 @@ module.exports = function(app, gestorBD) {
                         mensajeMasReciente = mensajesObtenidos[i];
                     }
                 }
-                //console.log(mensajeMasReciente.emisor + " " + mensajeMasReciente.receptor + " " + mensajeMasReciente.texto);
                 return mensajeMasReciente;
             }
         })

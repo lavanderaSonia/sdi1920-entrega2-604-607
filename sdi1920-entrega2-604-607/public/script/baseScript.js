@@ -1,5 +1,4 @@
 $("document").ready( function() {
-    console.log("Se ejecuta");
     // Comprueba si existe algún mensaje y lo muestra con la clase indicada
     var mensaje = getUrlParameter('mensaje');
     var tipoMensaje = getUrlParameter('tipoMensaje');
