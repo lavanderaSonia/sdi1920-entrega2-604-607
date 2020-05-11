@@ -1,5 +1,8 @@
 module.exports = function(app, gestorBD) {
 
+    /**
+     * Permite resetear la base de datos insertando los datos de prueba
+     */
     app.get("/resetear", function (req, res) {
         var pass = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update("123456").digest('hex');

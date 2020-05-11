@@ -168,7 +168,7 @@ module.exports = {
     },
     /**
      * Añade un usuario a la lista de amigos
-     * @param criterio
+     * @param criterio 
      * @param amigo
      * @param funcionCallback
      */
@@ -213,7 +213,7 @@ module.exports = {
     },
     /**
      * Inserta un mensaje
-     * @param mensaje
+     * @param mensaje mensaje que queremos insertar
      * @param funcionCallback
      */
     insertarMensaje : function(mensaje, funcionCallback) {
@@ -233,6 +233,11 @@ module.exports = {
             }
         });
     },
+    /**
+     * Permite obtener los mensajes según criterio pasado como parámetro
+     * @param criterio criterio para obtener los datos
+     * @param funcionCallback
+     */
     obtenerMensajes(criterio, funcionCallback){
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
@@ -273,6 +278,10 @@ module.exports = {
             }
         });
     },
+    /**
+     * Permite resetear la base de datos eliminando todas las colecciones
+     * @param funcionCallback
+     */
     resetear : function(funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
@@ -291,6 +300,12 @@ module.exports = {
             }
         });
     },
+    /**
+     * Permite insertar varios datos en la colección pasada como parametro
+     * @param coleccion colección donde queremos insertar los datos
+     * @param datos datos que queremos insertar
+     * @param funcionCallback
+     */
     insertarVarios : function(coleccion, datos, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {

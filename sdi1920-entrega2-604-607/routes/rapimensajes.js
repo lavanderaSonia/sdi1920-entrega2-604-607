@@ -125,7 +125,7 @@ module.exports = function(app, gestorBD) {
     })
 
     /**
-     *
+     * Permite obtener los mensajes no leidos de un usuario
      */
     app.get('/api/mensajes/noLeidos/:email', function (req, res) {
         let emailEmisor = {email: res.usuario};
@@ -189,7 +189,7 @@ module.exports = function(app, gestorBD) {
     });
 
     /**
-     *
+     * Permite obtener los mensajes leidos de un amigo
      */
     app.get("/api/mensajes/leidos/:amigo", function(req, res) {
         // Primero obtenemos los ids para devolverlos después y saber cuales marcar en el widget
