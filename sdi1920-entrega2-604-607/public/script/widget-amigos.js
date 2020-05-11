@@ -73,7 +73,7 @@ function mostrarUsuarios(amigo, numNoLeidos) {
     $("#tablaCuerpo").append(
         "<tr id=" + amigo._id + ">" +
         "<td>" + amigo.nombre + "</td>" +
-        "<td><a onclick= abrirChat('" + amigo.email + "') class='amigoChat' id='chat" + amigo.email + "'><span class='amigo'>" + amigo.email + "</span>" +
+        "<td><a onclick= abrirChat('" + amigo.email + "') class='chat' id='chat" + amigo.email + "'><span class='amigo'>" + amigo.email + "</span>" +
         "<span class='badge' name='numNoLeidos" + amigo.email + "'>" + (numNoLeidos == 0 ? "" : numNoLeidos) + "</span>" + "</a>" +
         "</div><td></tr>");
 }
