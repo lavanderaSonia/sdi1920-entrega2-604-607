@@ -107,7 +107,7 @@ module.exports = function(app, gestorBD) {
                 };
 
                 gestorBD.obtenerMensajes(criterio, function (mensajes) {
-                    if (mensajes == null || mensajes.length == 0) {
+                    if (mensajes == null) {
                         app.get("logger").info("Error al obtener los mensajes");
                         res.status(500);
                         res.json({error: "Error al obtener los mensajes"})
