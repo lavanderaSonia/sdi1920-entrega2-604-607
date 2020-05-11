@@ -1,6 +1,5 @@
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 
 import java.util.List;
 
@@ -18,14 +17,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import tests.pageobjects.PO_AddPublicationView;
 import tests.pageobjects.PO_ChatView;
 import tests.pageobjects.PO_HomeView;
 import tests.pageobjects.PO_ListUserBySearchText;
 import tests.pageobjects.PO_LoginView;
 import tests.pageobjects.PO_NavView;
 import tests.pageobjects.PO_PrivateView;
-import tests.pageobjects.PO_Properties;
 import tests.pageobjects.PO_RegisterView;
 import tests.pageobjects.PO_View;
 import tests.util.SeleniumUtils;
