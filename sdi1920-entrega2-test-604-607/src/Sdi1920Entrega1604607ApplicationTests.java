@@ -1,4 +1,7 @@
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+
 import java.util.List;
 
 import org.junit.After;
@@ -458,12 +461,10 @@ public class Sdi1920Entrega1604607ApplicationTests {
 		Assert.assertEquals(3,
 				SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout()).size());
 
-		
 		PO_ListUserBySearchText.fillSearchTextAmigos(driver, "rut");
-		
+
 		Assert.assertEquals(1,
 				SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout()).size());
-
 
 		// Comprobamos que son los usuarios esperados o sea no coincide con ninguno de
 		// los del sistema
@@ -471,11 +472,10 @@ public class Sdi1920Entrega1604607ApplicationTests {
 		SeleniumUtils.EsperaCargaPaginaNoTexto(driver, "edward@email.com", PO_View.getTimeout());
 		SeleniumUtils.EsperaCargaPaginaNoTexto(driver, "ana@email.com", PO_View.getTimeout());
 
-		
 	}
 
-	//[Prueba27] Acceder a la lista de mensajes de un amigo “chat”, 
-	//la lista debe contener al menos tres mensajes.
+	// [Prueba27] Acceder a la lista de mensajes de un amigo “chat”,
+	// la lista debe contener al menos tres mensajes.
 	@Test
 	public void prueba27() {
 		driver.navigate().to(URL + "/cliente.html");
@@ -484,29 +484,29 @@ public class Sdi1920Entrega1604607ApplicationTests {
 
 		List<WebElement> elementos = PO_View.checkElement(driver, "text", "rut@email.com");
 		elementos.get(0).click();
-		
+
 		PO_View.checkElement(driver, "text", "Primer mensaje enviado");
 		PO_View.checkElement(driver, "text", "Comprobando que funciona");
 
 	}
 
-	// [Prueba28] Acceder a la lista de mensajes de un amigo “chat” y crear un nuevo mensaje, validar que el
+	// [Prueba28] Acceder a la lista de mensajes de un amigo “chat” y crear un nuevo
+	// mensaje, validar que el
 	// mensaje aparece en la lista de mensajes.
 	@Test
 	public void prueba28() {
 		driver.navigate().to(URL + "/cliente.html");
-		
+
 		// Nos logueamos con un usuario válido
 		PO_LoginView.fillForm(driver, "sonia@email.com", "123456");
 
 		// Comprobamos que estamos en la lista de amigos y entramos a un chat
 		PO_View.checkElement(driver, "text", "Rut");
-		PO_View.checkElement(driver, "id", "chatrut@email.com")
-		.get(0).click();
-		
+		PO_View.checkElement(driver, "id", "chatrut@email.com").get(0).click();
+
 		// Enviamos el mensaje
 		PO_ChatView.sendMessage(driver, "Mensaje de la prueba 28");
-		
+
 		// Comprobamos que aparece el mensaje
 		PO_View.checkElement(driver, "text", "Mensaje de la prueba 28");
 	}
@@ -545,62 +545,98 @@ public class Sdi1920Entrega1604607ApplicationTests {
 		PO_NavView.checkElement(driver, "id", "photo-Prueba 29");
 	}
 
-	// Identificarse en la aplicación y enviar tres mensajes a un amigo, validar que los mensajes
-	// enviados aparecen en el chat. Identificarse después con el usuario que recibido el mensaje y validar que el
+	// Identificarse en la aplicación y enviar tres mensajes a un amigo, validar que
+	// los mensajes
+	// enviados aparecen en el chat. Identificarse después con el usuario que
+	// recibido el mensaje y validar que el
 	// número de mensajes sin leer aparece en la propia lista de amigos.
 	@Test
 	public void prueba30() {
 		driver.navigate().to(URL + "/cliente.html");
-		
+
 		// Nos logueamos con un usuario válido
 		PO_LoginView.fillForm(driver, "sonia@email.com", "123456");
 
 		// Comprobamos que estamos en la lista de amigos y entramos a un chat
 		PO_View.checkElement(driver, "text", "Rut");
-		PO_View.checkElement(driver, "id", "chatrut@email.com")
-		.get(0).click();
-		
+		PO_View.checkElement(driver, "id", "chatrut@email.com").get(0).click();
+
 		// Enviamos los mensajes y comprobamos que aparecen después de enviarlos
 		PO_ChatView.sendMessage(driver, "Primer mensaje de la prueba 30");
 		PO_View.checkElement(driver, "text", "Primer mensaje de la prueba 30");
-		
+
 		PO_ChatView.sendMessage(driver, "Segundo mensaje de la prueba 30");
 		PO_View.checkElement(driver, "text", "Segundo mensaje de la prueba 30");
-		
+
 		PO_ChatView.sendMessage(driver, "Tercer mensaje de la prueba 30");
 		PO_View.checkElement(driver, "text", "Tercer mensaje de la prueba 30");
-		
+
 		// Nos logueamos con el otro usuario
 		driver.navigate().to(URL + "/cliente.html");
 		PO_LoginView.fillForm(driver, "rut@email.com", "123456");
-		
+
 		// Comprobamos que tiene 4 mensajes sin leer, 3 de esta prueba y 1 de la 28
 		PO_View.checkElement(driver, "text", "4");
 	}
 
-	// [Prueba31] Mostrar el listado de usuarios y comprobar que se muestran todos
-	// los que existen en el sistema.
+	// [Prueba31] Identificarse con un usuario A que al menos tenga 3 amigos,
+	// ir al chat del ultimo amigo de la lista y enviarle un mensaje,
+	// volver a la lista de amigos y
+	// comprobar que el usuario al que se le ha enviado el mensaje esta en primera
+	// posición.
+	// Identificarse con el usuario B y enviarle un mensaje al usuario A.
+	// Volver a identificarse con el usuario A y ver que el usuario que acaba de
+	// mandarle el mensaje es el primero en su lista de amigos.
 	@Test
 	public void prueba31() {
-		PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "admin@email.com", "admin");
+		
+		
+		driver.navigate().to(URL + "/cliente.html");
 
-		PO_HomeView.checkElement(driver, "id", "users-menu").get(0).click();
-		PO_HomeView.checkElement(driver, "@href", "/admin/user/list").get(0).click();
-
-		// el login ya me lleva a la lista de usuarios-> comprobamos que son 3 en total
-		// (hay 2 del InsertDataService y 1+ por las pruebas)
-		Assert.assertEquals(6,
+		// Nos logueamos con un usuario válido
+		PO_LoginView.fillForm(driver, "sonia@email.com", "123456");
+		
+		//Comprobamos que tenga 3 amigos 
+		Assert.assertEquals(3,
 				SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout()).size());
+		
+		String ultimaPosicion = driver.findElement(By.xpath("//table/tbody/tr[3]/td[3]")).getText();
+		 
+		 
+		//Vamos al chat del ultimo amigo 
+		PO_HomeView.checkElement(driver, "class", "amigoChat").get(2).click();
+		
+		//Mandamos mensaje 
+		PO_ChatView.sendMessage(driver, "Mensaje prueba 31");
+		
+		//Volvemos a la lista de amigos
+		driver.navigate().to(URL + "/cliente.html?w=amigos");
+		
+		//comprobar que el usuario al que se le ha enviado el mensaje esta en primera posicion
+		 
+		String primerPosicion =  driver.findElement(By.xpath("//table/tbody/tr[1]/td[1]")).getText();
+		
+		assertSame(ultimaPosicion, primerPosicion);
+		
+		//Identificarse con el usuario B y enviarle un mensaje al usuario A.
+		PO_LoginView.fillForm(driver, primerPosicion, "123456");
+		PO_HomeView.checkElement(driver, "text", "sonia@email.com").get(0).click();
+		
+		PO_ChatView.sendMessage(driver, "Mensaje prueba 31 contestando");
 
-		// Comprobamos que son los usuarios esperados
-		PO_NavView.checkElement(driver, "text", "thalia@email.com");
-		PO_NavView.checkElement(driver, "text", "usuario@email.com");
-		PO_NavView.checkElement(driver, "text", "usuario1@email.com");
-		PO_NavView.checkElement(driver, "text", "usuario2@email.com");
-		PO_NavView.checkElement(driver, "text", "sonia@email.com"); // Estos tres son cargados por InsertDataService
-		PO_NavView.checkElement(driver, "text", "prueba@email.com"); // Este es de las pruebas de registro de usuario
+		PO_LoginView.fillForm(driver, "soni@email.com", "123456");
+		
+		String vueltaPrimer =  driver.findElement(By.xpath("//table/tbody/tr[1]/td[1]")).getText();
+		
 
+		assertSame(ultimaPosicion, vueltaPrimer);
+
+		
+		
+		
+
+
+		
 	}
 
 }
