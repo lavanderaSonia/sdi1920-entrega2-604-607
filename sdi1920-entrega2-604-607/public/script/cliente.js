@@ -20,6 +20,9 @@ if (Cookies.get('token') != null) {
     }
 }
 
+/**
+ * Permite cargar el widget-amigos.html desde el menú de navegación
+ */
 function widgetAmigos() {
     clearInterval(idActualizarMensajes);
     clearInterval(idActualizarNoLeidos);

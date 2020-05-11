@@ -6,6 +6,9 @@ var actualizado = true;
 leerMensajes();
 cargarMensajes();
 
+/**
+ * Permite cargar los mensajes todos
+ */
 function cargarMensajes() {
     $.ajax({
         url: URLbase + "/mensajes/" + amigoSeleccionado,
@@ -24,6 +27,9 @@ function cargarMensajes() {
     });
 }
 
+/**
+ * Permite actualizar los mensajes cargando aquellos que aún no fueron leidos
+ */
 function actualizarMensajes() {
     // Comprobamos que han terminado de actualizarse los mensajes leidos
     // Si no podria darse el caso de que se muestren varias veces los mismos
@@ -47,6 +53,9 @@ function actualizarMensajes() {
     });
 }
 
+/**
+ * Permite marcar los mensajes como leídos
+ */
 function leerMensajes() {
     $.ajax({
         url: URLbase + "/mensajes/marcarLeidos",
@@ -63,6 +72,10 @@ function leerMensajes() {
     });
 }
 
+/**
+ * Permite mostrar los mensajes
+ * @param mensajes
+ */
 function mostrarMensajes(mensajes){
     //$("#mensajes").empty(); // Vaciar la tabla
     for(let i=0; i<mensajes.length; i++){
@@ -92,6 +105,9 @@ function mostrarMensajes(mensajes){
     }
 }
 
+/**
+ * Carga los mensajes leidos
+ */
 function comprobarMensajesLeidos() {
     if(amigoSeleccionado == "")
         return
@@ -111,6 +127,10 @@ function comprobarMensajesLeidos() {
     });
 }
 
+/**
+ * Permite marcar como leidos los mensajes mostrando la imagen del ojo
+ * @param mensajes mensajes del chat
+ */
 function marcarComoLeidos(mensajes) {
     for(var i = 0; i < mensajes.length; i++) {
         $("#" + mensajes[i]._id.toString()).html("<img class='imagenVisto' src='/img/visto.png' />");
@@ -119,10 +139,17 @@ function marcarComoLeidos(mensajes) {
 
 cargarNombreAmigo();
 
+/**
+ * Muestra el nombre del amigo con el que mantenemos una conversación
+ */
 function cargarNombreAmigo(){
     $('#nombreUsuario').text("Chat con el usuario: " + amigoSeleccionado);
 }
 
+/**
+ * Aquí se actualizarán automáticamente los mensajes
+ * tuvimos que meter el clearInterval para que dejara de actualizar llegado el momento
+ */
 var idActualizarMensajes;
 idActualizarMensajes = setInterval(function () {
     if(amigoSeleccionado!="") {
@@ -167,6 +194,9 @@ function enviarMensaje() {
     });
 }
 
+/**
+ * Permite actualizar el scroll en función de la cantidad de mensajes
+ */
 function updateScroll() {
     var element = document.getElementById("mensajes");
     element.scrollTop = element.scrollHeight;

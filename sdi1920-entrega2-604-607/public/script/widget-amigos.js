@@ -78,7 +78,10 @@ function mostrarUsuarios(amigo, numNoLeidos) {
         "</div><td></tr>");
 }
 
-// Actualiza los mensajes no leídos
+
+/**
+ * Actualiza el numero mensajes no leídos
+ */
 function actualizarNoLeidos() {
     $(".amigo").each( function (index) {
         var amigo =  $(this).text()
@@ -100,6 +103,11 @@ function actualizarNoLeidos() {
     });
 }
 
+/**
+ * Función que carga los mensajes no leidos de un amigo en este caso
+ * el número de mensajes
+ * @param amigo email del amigo
+ */
 function obtenerNoLeidos(amigo) {
     $.ajax({
         url: URLbase + "/mensajes/noLeidos/" + amigo.email,
@@ -116,17 +124,19 @@ function obtenerNoLeidos(amigo) {
     });
 }
 
+/**
+ * Función que me permite abrir el chat del amigo pasado por parámetro
+ * @param email email del amigo
+ */
 function abrirChat(email){
     amigoSeleccionado = email;
     $("#contenedor-principal").load("widget-mensajes.html");
 }
 
 
-
-
-
-
-
+/**
+ * Permite filtrar los amigos por el nombre
+ */
 $('#filtro-nombre').on('input', function (e) {
     $("#tablaCuerpo").empty(); // Vaciar la tabla
     let amigosFiltrados = [];
