@@ -607,52 +607,61 @@ public class Sdi1920Entrega1604607ApplicationTests {
 	// Volver a identificarse con el usuario A y ver que el usuario que acaba de
 	// mandarle el mensaje es el primero en su lista de amigos.
 	@Test
-	public void prueba31() {
-		
-		
+	public void prueba31() {		
 		driver.navigate().to(URL + "/cliente.html");
 
-		// Nos logueamos con un usuario válido
+		// Nos logueamos con el usuario A
 		PO_LoginView.fillForm(driver, "sonia@email.com", "123456");
+		// Comprobamos que salen todos los amigos
+		PO_View.checkElement(driver, "text", "thalia@email.com");
+		PO_View.checkElement(driver, "text", "rut@email.com");
+		PO_View.checkElement(driver, "text", "edward@email.com");
 		
+		// Guardamos el email del último amigo
+		List<WebElement> amigos = PO_View.checkElement(driver, "class", "amigo");
+		String ultimaPosicion = amigos.get(amigos.size() - 1).getText();
 		
-		String ultimaPosicion = driver.findElement(By.xpath("//table/tbody/tr[3]/td[3]")).getText();
-		 
-		 
+		// Guardamos también el del primero para mandarle un mensaje después (usuario B)
+		String usuarioB = amigos.get(0).getText();
 		//Vamos al chat del ultimo amigo 
-		PO_HomeView.checkElement(driver, "class", "amigoChat").get(2).click();
+		PO_HomeView.checkElement(driver, "class", "chat").get(amigos.size() - 1).click();
 		
 		//Mandamos mensaje 
 		PO_ChatView.sendMessage(driver, "Mensaje prueba 31");
+		// Comprobamos que se ha enviado
+		PO_View.checkElement(driver, "text", "Mensaje prueba 31");
 		
-		//Volvemos a la lista de amigos
-		driver.navigate().to(URL + "/cliente.html?w=amigos");
+		//Volvemos a la lista de amigos 
+		PO_View.checkElement(driver, "id", "goToAmigos").get(0).click();
 		
-		//comprobar que el usuario al que se le ha enviado el mensaje esta en primera posicion
-		 
-		String primerPosicion =  driver.findElement(By.xpath("//table/tbody/tr[1]/td[1]")).getText();
+		//Comprobar que el usuario al que se le ha enviado el mensaje esta en primera posicion
+		PO_View.checkElement(driver, "text", ultimaPosicion);
+		amigos = PO_View.checkElement(driver, "class", "amigo");
+		String primerPosicion =  amigos.get(0).getText();
 		
-		assertSame(ultimaPosicion, primerPosicion);
+		assertEquals(ultimaPosicion, primerPosicion);
 		
 		//Identificarse con el usuario B y enviarle un mensaje al usuario A.
-		PO_LoginView.fillForm(driver, primerPosicion, "123456");
+		driver.navigate().to(URL + "/cliente.html");
+		PO_LoginView.fillForm(driver, usuarioB, "123456");
 		PO_HomeView.checkElement(driver, "text", "sonia@email.com").get(0).click();
 		
-		PO_ChatView.sendMessage(driver, "Mensaje prueba 31 contestando");
+		PO_ChatView.sendMessage(driver, "Mensaje prueba 31 usuario B");
+		// Comprobamos que se ha enviado
+		PO_View.checkElement(driver, "text", "Mensaje prueba 31 usuario B");
+		
+		// Volvemos al usuario A y comprobamos que el primero de la lista es el usuario B
+		driver.navigate().to(URL + "/cliente.html");
+		PO_LoginView.fillForm(driver, "sonia@email.com", "123456");
+		// Comprobamos que salen todos los amigos
+		PO_View.checkElement(driver, "text", "thalia@email.com");
+		PO_View.checkElement(driver, "text", "rut@email.com");
+		PO_View.checkElement(driver, "text", "edward@email.com");
+		
+		amigos = PO_View.checkElement(driver, "class", "amigo");
+		String vueltaPrimer =  amigos.get(0).getText();
 
-		PO_LoginView.fillForm(driver, "soni@email.com", "123456");
-		
-		String vueltaPrimer =  driver.findElement(By.xpath("//table/tbody/tr[1]/td[1]")).getText();
-		
-
-		assertSame(ultimaPosicion, vueltaPrimer);
-
-		
-		
-		
-
-
-		
+		assertEquals(usuarioB, vueltaPrimer);		
 	}
 
 }

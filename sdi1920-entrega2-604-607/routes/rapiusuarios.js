@@ -63,12 +63,12 @@ module.exports = function(app, gestorBD) {
         emailsAmigos.sort(function (a, b) {
             var mensajeA = obtenerUltimoMensajeAmigo(a, req, res);
             var mensajeB = obtenerUltimoMensajeAmigo(b, req, res);
-            // Si no hay mensajes con el usuarioA devolvemos el B
+            // Si no hay mensajes con el usuarioA devolvemos false, porque B es mayor que A
             if(mensajeA == null || mensajeA == undefined)
-                return mensajeB;
+                return false;
             // Lo mismo pero al revés
             if(mensajeB == null || mensajeB == undefined)
-                return mensajeB;
+                return true;
             return mensajeA.fecha > mensajeB.fecha;
         })
         console.log(emailsAmigos)
