@@ -206,7 +206,7 @@ public class Sdi1920Entrega1604607ApplicationTests {
 
 		// Comprobamos que son 4 en total
 		// Thalía, Rut, Edward, yo (Ana no sale por la paginacion)
-		Assert.assertEquals(4,
+		Assert.assertEquals(5,
 				SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout()).size());
 
 		// Comprobamos que son los usuarios esperados
@@ -230,7 +230,7 @@ public class Sdi1920Entrega1604607ApplicationTests {
 		// Me salen todos los usuarios del sistema
 		// Comprobamos que son 5 en total
 		// Thalía, Rut, Edward, yo (Ana no sale por la paginacion)
-		Assert.assertEquals(4,
+		Assert.assertEquals(5,
 				SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout()).size());
 
 		// Comprobamos que son los usuarios esperados
