@@ -12,12 +12,12 @@ module.exports = function (app, swig, gestorBD) {
         }
 
         // Comprobamos que el usuario en sesión y al que se quiere enviar la petición no son amigos ya
-        gestorBD.obtenerUsuarios({"email" : req.session.usuario }, function(usuarios){
-            if(usuarios == null || usuarios.length == 0) {
+        gestorBD.obtenerUsuarios({"email" : req.session.usuario }, function(usuarioSesion){
+            if(usuarioSesion == null || usuarioSesion.length == 0) {
                 app.get("logger").info("Se ha producido un error al listar los usuarios");
                 res.redirect("/usuarios?mensaje=Se ha producido un error.&tipoMensaje=alert-danger");
             }
-            else if(usuarios[0].amigos.includes(req.params.email)) {
+            else if(usuarioSesion[0].amigos.includes(req.params.email)) {
                 app.get("logger").info(req.session.usuario + " ya eres amigo del usuario al que estás enviando petición de amistad");
                 res.redirect("/listaUsuarios?mensaje=Ya eres amigo de " + result[0].nombre + ".");
             }
@@ -35,30 +35,28 @@ module.exports = function (app, swig, gestorBD) {
                                 {"email_receptor" : req.session.usuario, "email_emisor" : usuarios[0].email }
                             ]}, function(result) {
                             if(result != null && result.length > 0){
-                                app.get("logger").info("Ya existe una invitación de amista");
+                                app.get("logger").info("Ya existe una invitación de amistad");
                                 res.redirect("/usuarios?mensaje=Ya existe una invitación a/de " + usuarios[0].nombre + ".");
 
                             }
                             else {
-                                // Obtenemos el usuario en sesión para añadir su nombre a la invitación
-                                gestorBD.obtenerUsuarios({ "email" : req.session.usuario }, function(usuarioSesion){
-                                    let invitacion = {
-                                        email_emisor : req.session.usuario,
-                                        email_receptor : usuarios[0].email,
-                                        nombre: usuarioSesion[0].nombre
+                                // Creamos la invitación con el nombre del usuario en sesión, que hemos obtenido anteriormente
+                                let invitacion = {
+                                    email_emisor : req.session.usuario,
+                                    email_receptor : usuarios[0].email,
+                                    nombre: usuarioSesion[0].nombre
+                                }
+                                gestorBD.insertarInvitacion(invitacion, function(resultInsertar) {
+                                    if(resultInsertar == null){
+                                        app.get("logger").info("Se ha producido un error al enviar la invitación");
+                                        res.redirect("/usuarios?mensaje=Se ha producido un error.&tipoMensaje=alert-danger");
                                     }
-                                    gestorBD.insertarInvitacion(invitacion, function(resultInsertar) {
-                                        if(resultInsertar == null){
-                                            app.get("logger").info("Se ha producido un error al enviar la invitación");
-                                            res.redirect("/usuarios?mensaje=Se ha producido un error.&tipoMensaje=alert-danger");
-                                        }
-                                        else {
-                                            app.get("logger").info("Invitación enviada correctamente a " + usuarios[0].nombre);
-                                            res.redirect("/usuarios?mensaje=Invitación enviada correctamente a " + usuarios[0].nombre + ".");
+                                    else {
+                                        app.get("logger").info("Invitación enviada correctamente a " + usuarios[0].nombre);
+                                        res.redirect("/usuarios?mensaje=Invitación enviada correctamente a " + usuarios[0].nombre + ".");
 
-                                        }
-                                    })
-                                });
+                                    }
+                                })
                             }
                         });
                     }
