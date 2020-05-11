@@ -13,6 +13,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -511,38 +512,56 @@ public class Sdi1920Entrega1604607ApplicationTests {
 		PO_View.checkElement(driver, "text", "Mensaje de la prueba 28");
 	}
 
-	// Desde el formulario de crear publicaciones, crear una publicación con datos
-	// válidos y una
-	// foto adjunta. Comprobar que en el listado de publicaciones aparecer la foto
-	// adjunta junto al resto de
-	// datos de la publicación
+	// Identificarse en la aplicación y enviar un mensaje a un amigo,
+	// validar que el mensaje enviado aparece en el chat. Identificarse
+	// después con el usuario que recibido el mensaje y validar que tiene un
+	// mensaje sin leer, entrar en el chat y comprobar que el mensaje pasa a tener el estado leído.
 	@Test
 	public void prueba29() {
-		PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "thalia@email.com", "pass");
+		driver.navigate().to(URL + "/cliente.html");
+		
+		// Nos logueamos con un usuario válido
+		PO_LoginView.fillForm(driver, "thalia@email.com", "123456");
 
-		PO_HomeView.checkElement(driver, "id", "publications-menu").get(0).click();
-		PO_HomeView.checkElement(driver, "@href", "/publication/add").get(0).click();
-
-		PO_AddPublicationView.fillForm(driver, "Prueba 29",
-				"Esto es una prueba automática de crear una publicación con foto.", "C:\\logo.png");
-
-		// Cambiamos a la cuenta de un amigo
-		PO_HomeView.clickOption(driver, "logout", "class", "btn btn-primary");
-		PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-		PO_LoginView.fillForm(driver, "sonia@email.com", "pass");
-
-		List<WebElement> elementos = PO_View.checkElement(driver, "free", "//li[contains(@id, 'friends-menu')]/a");
-		elementos.get(0).click();
-		elementos = PO_View.checkElement(driver, "free", "//a[contains(@href, '/user/friends/list')]");
-		elementos.get(0).click();
-
-		PO_HomeView.checkElement(driver, "free", "//*[@id=\"friend\"]").get(0).click();
-
-		// Comprobamos que sale la publicación que acabamos de hacer
-		PO_NavView.checkElement(driver, "text", "Prueba 29");
-		PO_NavView.checkElement(driver, "text", "Esto es una prueba automática de crear una publicación con foto.");
-		PO_NavView.checkElement(driver, "id", "photo-Prueba 29");
+		// Comprobamos que estamos en la lista de amigos y entramos a un chat
+		PO_View.checkElement(driver, "text", "Sonia");
+		PO_View.checkElement(driver, "id", "chatsonia@email.com")
+		.get(0).click();
+		
+		// Enviamos el mensaje y comprobamos que aparece
+		PO_ChatView.sendMessage(driver, "Mensaje de la prueba 29");
+		PO_View.checkElement(driver, "text", "Mensaje de la prueba 29");
+		
+		// Comprobamos también que no aparece como leído (es el último)
+		List<WebElement> mensajes = PO_View.checkElement(driver, "class", "self");
+		boolean noVisto = false;
+		try {
+			// Si no ha sido leido no aparece la imagen, por lo que debería dar NoSuchElementException
+			mensajes.get(mensajes.size() - 1).findElement(By.className("imagenVisto"));
+		} catch(NoSuchElementException e) {
+			noVisto = true;
+		}
+		Assert.assertTrue(noVisto);
+		
+		// Cambiamos a la otra cuenta para leer el mensaje
+		driver.navigate().to(URL + "/cliente.html");
+		PO_LoginView.fillForm(driver, "sonia@email.com", "123456");
+		PO_View.checkElement(driver, "id", "chatthalia@email.com").get(0).click();
+		// Comprobamos que sale el mensaje
+		PO_View.checkElement(driver, "text", "Mensaje de la prueba 29");
+		
+		// Cambiamos de nuevo a la cuenta anterior, ya que unicamente los mensajes
+		// enviados aparecen como leidos
+		driver.navigate().to(URL + "/cliente.html");
+		PO_LoginView.fillForm(driver, "thalia@email.com", "123456");
+		PO_View.checkElement(driver, "id", "chatsonia@email.com")
+		.get(0).click();
+		
+		// Comprobamos que ahora aparece como leído (sigue siendo el último)
+		// Ahora no debería dar ninguna excepción
+		mensajes = PO_View.checkElement(driver, "class", "self");
+		mensajes.get(mensajes.size() - 1).findElement(By.className("imagenVisto"));
+		
 	}
 
 	// Identificarse en la aplicación y enviar tres mensajes a un amigo, validar que
@@ -596,9 +615,6 @@ public class Sdi1920Entrega1604607ApplicationTests {
 		// Nos logueamos con un usuario válido
 		PO_LoginView.fillForm(driver, "sonia@email.com", "123456");
 		
-		//Comprobamos que tenga 3 amigos 
-		Assert.assertEquals(3,
-				SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout()).size());
 		
 		String ultimaPosicion = driver.findElement(By.xpath("//table/tbody/tr[3]/td[3]")).getText();
 		 
