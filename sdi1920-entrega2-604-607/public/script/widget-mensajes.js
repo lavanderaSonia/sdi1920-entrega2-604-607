@@ -84,7 +84,7 @@ function mostrarMensajes(mensajes){
                 "<p>" + mensaje.emisor + "</p>" +
                 "<p>" + mensaje.texto + "</p>" +
                 "<span id='" + mensaje._id.toString() + "' class='leido'>" +
-                (mensaje.leido ?  "<img src='/img/visto.png' />" : "") + "</span>"
+                (mensaje.leido ?  "<img class='imagenVisto' src='/img/visto.png' />" : "") + "</span>"
                 + "</div>"
             ;
             conversacion += "</li>";
@@ -95,6 +95,8 @@ function mostrarMensajes(mensajes){
 }
 
 function comprobarMensajesLeidos() {
+    if(amigoSeleccionado == "")
+        return
     $.ajax({
         url: URLbase + "/mensajes/leidos/" + amigoSeleccionado,
         type: "GET",
@@ -114,7 +116,7 @@ function comprobarMensajesLeidos() {
 
 function marcarComoLeidos(mensajes) {
     for(var i = 0; i < mensajes.length; i++) {
-        $("#" + mensajes[i]._id.toString()).html("<img src='/img/visto.png' />");
+        $("#" + mensajes[i]._id.toString()).html("<img class='imagenVisto' src='/img/visto.png' />");
     }
 }
 
