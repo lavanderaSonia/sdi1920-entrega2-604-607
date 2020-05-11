@@ -7,7 +7,7 @@ import org.openqa.selenium.WebElement;
 public class PO_ChatView extends PO_NavView {
 	
 	static public void sendMessage(WebDriver driver, String message) {
-		WebElement mensaje = driver.findElement(By.name("mensaje"));
+		WebElement mensaje = driver.findElement(By.id("messageContent"));
 		mensaje.click();
 		mensaje.clear();
 		mensaje.sendKeys(message);

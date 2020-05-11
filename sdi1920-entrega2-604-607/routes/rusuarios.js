@@ -162,7 +162,7 @@ module.exports = function (app, swig, gestorBD) {
 
                 // Obtenemos el usuario en sesión para saber cuales son sus amigos y no mostrar el enlace de 'Añadir amigo'
                 gestorBD.obtenerUsuarios({ "email" : req.session.usuario }, function(usuarioSesion){
-                    if(usuarios == null || usuarios.length == 0)
+                    if(usuarios == null)
                         res.send("Se ha producido un error");
                     else {
                         let respuesta = swig.renderFile('views/busuarios.html', {

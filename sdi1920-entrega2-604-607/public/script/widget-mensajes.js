@@ -3,6 +3,7 @@ var mensajes;
 var mensajesNoLeidos;
 var actualizado = true;
 
+leerMensajes();
 cargarMensajes();
 
 function cargarMensajes() {

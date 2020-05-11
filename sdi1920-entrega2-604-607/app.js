@@ -105,7 +105,6 @@ app.use("/usuario/amigos", routerUsuarioSession);
 app.use("/peticion", routerUsuarioSession);
 app.use("/invitaciones", routerUsuarioSession);
 
-
 app.use(express.static('public'));
 
 //Variables
@@ -120,6 +119,7 @@ require("./routes/rusuarios")(app, swig, gestorBD); //(app,param1, param2, etc.)
 require("./routes/rinvitaciones")(app, swig, gestorBD);
 require("./routes/rapiusuarios.js")(app, gestorBD);
 require("./routes/rapimensajes.js")(app, gestorBD);
+require("./routes/rpruebas.js")(app, gestorBD);
 
 app.get('/', function (req, res) {
     res.redirect('/identificarse');

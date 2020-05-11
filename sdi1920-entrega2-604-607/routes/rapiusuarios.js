@@ -39,7 +39,7 @@ module.exports = function(app, gestorBD) {
             }
             else{
                 res.status(200);
-                res.json(JSON.stringify(ordenarAmigos(usuarios[0].amigos)));
+                res.json(JSON.stringify(ordenarAmigos(usuarios[0].amigos, req, res)));
             }
         })
     })
@@ -49,9 +49,17 @@ module.exports = function(app, gestorBD) {
      * Función que me permite ordenar los amigos por el ultimo mensaje
      * @param emailsAmigos
      */
-    function ordenarAmigos(emailsAmigos) {
+    function ordenarAmigos(emailsAmigos, req, res) {
         emailsAmigos.sort(function (a, b) {
-            return obtenerUltimoMensajeAmigo(a) > obtenerUltimoMensajeAmigo(b)
+            var mensajeA = obtenerUltimoMensajeAmigo(a, req, res);
+            var mensajeB = obtenerUltimoMensajeAmigo(b, req, res);
+            // Si no hay mensajes con el usuarioA devolvemos el B
+            if(mensajeA == null || mensajeA == undefined)
+                return mensajeB;
+            // Lo mismo pero al revés
+            if(mensajeB == null || mensajeB == undefined)
+                return mensajeB;
+            return mensajeA.fecha > mensajeB.fecha;
         })
         console.log(emailsAmigos)
         return emailsAmigos;
@@ -72,7 +80,7 @@ module.exports = function(app, gestorBD) {
             ]
         }
         gestorBD.obtenerMensajes(criterio, function (mensajes) {
-            if(mensajes==null || mensajes.length==0){
+            if(mensajes==null){
                 res.status(500);
                 res.json({error: "error al obtener los mensajes"})
             }
@@ -84,7 +92,7 @@ module.exports = function(app, gestorBD) {
                         mensajeMasReciente = mensajesObtenidos[i];
                     }
                 }
-                console.log(mensajeMasReciente.emisor + " " + mensajeMasReciente.receptor + " " + mensajeMasReciente.texto);
+                //console.log(mensajeMasReciente.emisor + " " + mensajeMasReciente.receptor + " " + mensajeMasReciente.texto);
                 return mensajeMasReciente;
             }
         })
